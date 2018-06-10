@@ -1,6 +1,7 @@
 package material
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/yaptide/yaptide/pkg/converter"
@@ -31,8 +32,8 @@ type PredefinedMaterial struct {
 type Element struct {
 	ID                             mapping.IsotopeNUCLID
 	RelativeStoichiometricFraction int64
-	AtomicMass                     float64
-	IValue                         float64
+	AtomicMass                     *int64
+	IValue                         *float64
 }
 
 // CompoundMaterial represent setup.Compound.
@@ -60,7 +61,7 @@ func ConvertSetupMaterials(
 	const maxMaterialsNumber = 100
 
 	if len(setupMat) > maxMaterialsNumber {
-		return Materials{}, nil, converter.GeneralMatError(
+		return Materials{}, nil, fmt.Errorf(
 			"Only %d distinct materials are permitted in shield (%d > %d)",
 			maxMaterialsNumber,
 			len(setupMat),
@@ -72,7 +73,7 @@ func ConvertSetupMaterials(
 	compoundMaterialsIds := []setup.MaterialID{}
 
 	for id, mat := range setupMat {
-		switch g := mat.Specs.MaterialType.(type) {
+		switch g := mat.Specs.(type) {
 		case setup.MaterialPredefined:
 			if g.PredefinedID != "vacuum" {
 				predefMaterialsIds = append(predefMaterialsIds, id)
@@ -82,12 +83,12 @@ func ConvertSetupMaterials(
 		case setup.MaterialCompound:
 			compoundMaterialsIds = append(compoundMaterialsIds, id)
 		case setup.MaterialVoxel:
-			return Materials{}, nil, converter.MaterialIDError(
-				mat.ID, "Voxel material serialization not implemented",
+			return Materials{}, nil, fmt.Errorf(
+				"Voxel material serialization not implemented",
 			)
 		default:
-			return Materials{}, nil, converter.MaterialIDError(
-				mat.ID, "Unknown material type",
+			return Materials{}, nil, fmt.Errorf(
+				"Unknown material type",
 			)
 		}
 	}
@@ -103,7 +104,7 @@ func ConvertSetupMaterials(
 
 	for _, predefID := range predefMaterialsIds {
 		predef, err := createPredefinedMaterial(
-			setupMat[predefID].Specs.MaterialType.(setup.MaterialPredefined), materialIDToShield[predefID],
+			setupMat[predefID].Specs.(setup.MaterialPredefined), materialIDToShield[predefID],
 		)
 		if err != nil {
 			return Materials{}, nil, err
@@ -113,7 +114,7 @@ func ConvertSetupMaterials(
 
 	for _, compoundID := range compoundMaterialsIds {
 		compound, err := createCompoundMaterial(
-			setupMat[compoundID].Specs.MaterialType.(setup.MaterialCompound), materialIDToShield[compoundID],
+			setupMat[compoundID].Specs.(setup.MaterialCompound), materialIDToShield[compoundID],
 		)
 		if err != nil {
 			return Materials{}, nil, err
@@ -125,7 +126,7 @@ func ConvertSetupMaterials(
 
 // SerializeStateOfMatter return true, if StateOfMatter should be serialized.
 func (p *PredefinedMaterial) SerializeStateOfMatter() bool {
-	return p.StateOfMatter != mapping.StateOfMatterToShield[setup.NonDefined]
+	return p.StateOfMatter != mapping.StateOfMatterToShield[setup.UndefinedStateOfMatter]
 }
 
 // SerializeDensity return true, if Density should be serialized.
@@ -141,12 +142,12 @@ func (c *CompoundMaterial) SerializeExternalStoppingPower() bool {
 
 // SerializeAtomicMass return true, if AtomicMass should be serialized.
 func (e *Element) SerializeAtomicMass() bool {
-	return e.AtomicMass > 0.0
+	return e.AtomicMass != nil
 }
 
 // SerializeIValue return true, if IValue should be serialized.
 func (e *Element) SerializeIValue() bool {
-	return e.IValue > 0.0
+	return e.IValue != nil
 }
 
 func createPredefinedMaterial(
@@ -154,8 +155,8 @@ func createPredefinedMaterial(
 ) (PredefinedMaterial, error) {
 	ICRUNumber, found := mapping.PredefinedMaterialsToShieldICRU[predef.PredefinedID]
 	if !found {
-		return PredefinedMaterial{}, converter.MaterialIDError(
-			id, "\"%s\" material mapping to shield format not found", predef.PredefinedID,
+		return PredefinedMaterial{}, fmt.Errorf(
+			"\"%s\" material mapping to shield format not found", predef.PredefinedID,
 		)
 	}
 
@@ -172,19 +173,19 @@ func createCompoundMaterial(
 ) (CompoundMaterial, error) {
 	const maxElementsNumber = 13
 
-	if compound.StateOfMatter == setup.NonDefined {
-		return CompoundMaterial{}, converter.MaterialIDError(
-			id, "StateOfMatter must be defined for Compound material",
+	if compound.StateOfMatter == setup.UndefinedStateOfMatter {
+		return CompoundMaterial{}, fmt.Errorf(
+			"StateOfMatter must be defined for Compound material",
 		)
 	}
 	if compound.Density <= 0.0 {
-		return CompoundMaterial{}, converter.MaterialIDError(
-			id, "Density must be specified for Compund material",
+		return CompoundMaterial{}, fmt.Errorf(
+			"Density must be specified for Compund material",
 		)
 	}
 	if len(compound.Elements) > maxElementsNumber {
-		return CompoundMaterial{}, converter.MaterialIDError(
-			id, "Only %d elements for Compound are permitted in shield (%d > %d)",
+		return CompoundMaterial{}, fmt.Errorf(
+			"Only %d elements for Compound are permitted in shield (%d > %d)",
 			maxElementsNumber, len(compound.Elements), maxElementsNumber,
 		)
 	}
@@ -196,8 +197,8 @@ func createCompoundMaterial(
 		materialICRU, found := mapping.
 			PredefinedMaterialsToShieldICRU[compound.ExternalStoppingPowerFromPredefined]
 		if !found {
-			return CompoundMaterial{}, converter.MaterialIDError(
-				id, "\"%s\" material mapping to shield format not found",
+			return CompoundMaterial{}, fmt.Errorf(
+				"\"%s\" material mapping to shield format not found",
 				compound.ExternalStoppingPowerFromPredefined,
 			)
 		}
@@ -211,8 +212,8 @@ func createCompoundMaterial(
 	for _, element := range compound.Elements {
 		isotopeNUCLID, found := mapping.IsotopesToShieldNUCLID[element.Isotope]
 		if !found {
-			return CompoundMaterial{}, converter.MaterialIDError(
-				id, "\"%s\" isotope mapping to shield format not found", element.Isotope,
+			return CompoundMaterial{}, fmt.Errorf(
+				"\"%s\" isotope mapping to shield format not found", element.Isotope,
 			)
 		}
 		elements = append(elements, Element{

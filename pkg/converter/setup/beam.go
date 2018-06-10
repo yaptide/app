@@ -7,38 +7,19 @@ import (
 // Beam ...
 type Beam struct {
 	// Direction ...
-	// SHIELD doc: BEAMDIR, BEAMPOS
 	Direction BeamDirection `json:"direction"`
 	// Divergance ...
-	// SHIELD doc: BEAMDIV
 	Divergence BeamDivergence `json:"divergence"`
-
 	// Particle ...
-	// SHIELD doc: HIPROJ, JPART0
 	Particle Particle `json:"particle"`
-
 	// InitialBaseEnergy ...
-	// SHIELD doc: TMAX0
 	InitialBaseEnergy float64 `json:"initialBaseEnergy"`
 	// InitialEnergySigma ...
-	// SHIELD doc: TMAX0
 	InitialEnergySigma float64 `json:"initialEnergySigma"`
 }
 
 // DefaultBeam represents default beam configuration.
-var DefaultBeam = Beam{
-	Direction: BeamDirection{
-		Phi: 0, Theta: 0, Position: geometry.Point{X: 0, Y: 0, Z: 0},
-	},
-	Divergence: BeamDivergence{
-		SigmaX:       0,
-		SigmaY:       0,
-		Distribution: GaussianDistribution,
-	},
-	Particle:           Particle{PredefinedParticle("proton")},
-	InitialBaseEnergy:  100,
-	InitialEnergySigma: 0,
-}
+var DefaultBeam = Beam{}
 
 // BeamDirection ...
 type BeamDirection struct {

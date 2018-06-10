@@ -40,17 +40,17 @@ func ConvertSetupDetectors(
 	for n, id := range detectIds {
 		setupDetector := detectorsMap[id]
 
-		duplicateID, foundDuplicate := uniqNameSet[setupDetector.Name]
+		duplicateID, foundDuplicate := uniqNameSet[string(setupDetector.ID)]
 		if foundDuplicate {
 			return nil, uniqNameSet,
-				converter.GeneralDetectorError(
+				fmt.Errorf(
 					"Found name duplicates: \"%s\" for detector Ids: %d and %d",
-					setupDetector.Name, id, duplicateID,
+					setupDetector.ID, id, duplicateID,
 				)
 		}
-		uniqNameSet[setupDetector.Name] = setupDetector.ID
+		uniqNameSet[string(setupDetector.ID)] = setupDetector.ID
 
-		filename := createDetectorFileName(setupDetector.Name, n)
+		filename := createDetectorFileName(string(setupDetector.ID), n)
 		mapFilenameToDetectorID[filename] = setupDetector.ID
 
 		detector, err := detectorConverter.convertDetector(&setupDetector, filename)
@@ -70,11 +70,11 @@ type detectorConverter struct {
 func (d detectorConverter) convertDetector(
 	detect *setup.Detector, filename string,
 ) (Detector, error) {
-	switch geo := detect.DetectorGeometry.GeometryType.(type) {
+	switch geo := detect.Geometry.(type) {
 	case setup.DetectorGeomap:
-		return Detector{}, converter.GeneralDetectorError("Geomap detector serialization not implemented")
+		return Detector{}, fmt.Errorf("Geomap detector serialization not implemented")
 	case setup.DetectorZones:
-		return Detector{}, converter.GeneralDetectorError("Zone detector serialization not implemented")
+		return Detector{}, fmt.Errorf("Zone detector serialization not implemented")
 
 	case setup.DetectorCylinder:
 		return d.convertStandardGeometryDetector(detect, filename)
@@ -84,7 +84,7 @@ func (d detectorConverter) convertDetector(
 		return d.convertStandardGeometryDetector(detect, filename)
 
 	default:
-		return Detector{}, converter.DetectorIDError(detect.ID, "Unknown detector type: %T", geo)
+		return Detector{}, fmt.Errorf("Unknown detector type: %T", geo)
 	}
 }
 
@@ -93,7 +93,7 @@ func (d detectorConverter) convertStandardGeometryDetector(
 ) (Detector, error) {
 	var newDetector Detector
 
-	switch geo := detect.DetectorGeometry.GeometryType.(type) {
+	switch geo := detect.Geometry.(type) {
 	case setup.DetectorCylinder:
 		newDetector = Detector{
 			ScoringType: "CYL",
@@ -149,12 +149,12 @@ func (d detectorConverter) convertStandardGeometryDetector(
 
 	particleInShieldFormat, err := mapping.ParticleToShield(detect.ScoredParticle)
 	if err != nil {
-		return Detector{}, converter.DetectorIDError(detect.ID, "%s", err.Error())
+		return Detector{}, fmt.Errorf("%s", err.Error())
 	}
 
 	scoringInShield, err := mapping.ScoringToShield(detect.Scoring)
 	if err != nil {
-		return Detector{}, converter.DetectorIDError(detect.ID, "%s", err.Error())
+		return Detector{}, fmt.Errorf("%s", err.Error())
 	}
 
 	newDetector.Arguments = append(newDetector.Arguments,
@@ -167,7 +167,7 @@ func (d detectorConverter) convertStandardGeometryDetector(
 		newDetector.Arguments, detect.ScoredParticle, detect.Scoring,
 	)
 	if err != nil {
-		return Detector{}, converter.DetectorIDError(detect.ID, "%s", err.Error())
+		return Detector{}, fmt.Errorf("%s", err.Error())
 	}
 	return newDetector, nil
 }
@@ -176,10 +176,10 @@ func (d detectorConverter) convertStandardGeometryDetector(
 func (d detectorConverter) appendHeavyIonOrLetfluCard(
 	arguments []interface{}, particle setup.Particle, scoringType setup.DetectorScoring,
 ) ([]interface{}, error) {
-	switch part := particle.ParticleType.(type) {
+	switch part := particle.(type) {
 	case setup.HeavyIon:
 		arguments = append(arguments, part.NucleonsCount, part.Charge)
-		switch scoring := scoringType.ScoringType.(type) {
+		switch scoring := scoringType.(type) {
 		case setup.LetTypeScoring:
 			material, found := d.materialIDToShield[scoring.Material]
 			if !found {

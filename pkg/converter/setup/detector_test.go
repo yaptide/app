@@ -10,15 +10,14 @@ import (
 var detectorTestCasses = test.MarshallingCases{
 	{
 		&Detector{
-			ID:   DetectorID(1),
-			Name: "ala",
-			DetectorGeometry: DetectorGeometry{DetectorMesh{
+			ID: DetectorID(1),
+			Geometry: DetectorMesh{
 				Center: geometry.Point{X: 1, Y: 2, Z: 3},
 				Size:   geometry.Vec3D{X: 1, Y: 2, Z: 3},
 				Slices: geometry.Vec3DInt{X: 10, Y: 10, Z: 10},
-			}},
-			ScoredParticle: Particle{AllParticles("all")},
-			Scoring:        DetectorScoring{PredefinedScoring("energy")},
+			},
+			ScoredParticle: AllParticles("all"),
+			Scoring:        PredefinedScoring("energy"),
 		},
 		`{
 			"id": 1,
@@ -50,15 +49,14 @@ var detectorTestCasses = test.MarshallingCases{
 		}`,
 	}, {
 		&Detector{
-			ID:   DetectorID(1),
-			Name: "ma",
-			DetectorGeometry: DetectorGeometry{DetectorMesh{
+			ID: DetectorID(1),
+			Geometry: DetectorMesh{
 				Center: geometry.Point{X: 1, Y: 2, Z: 3},
 				Size:   geometry.Vec3D{X: 1, Y: 2, Z: 3},
 				Slices: geometry.Vec3DInt{X: 10, Y: 10, Z: 10},
-			}},
-			ScoredParticle: Particle{HeavyIon{Charge: 10, NucleonsCount: 10}},
-			Scoring:        DetectorScoring{LetTypeScoring{Type: "tlet", Material: 0}},
+			},
+			ScoredParticle: &HeavyIon{Charge: 10, NucleonsCount: 10},
+			Scoring:        LetTypeScoring{Type: "tlet", Material: 0},
 		},
 		`{
 			"id": 1,

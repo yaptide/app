@@ -8,7 +8,7 @@ import (
 
 // ParticleToShield map Particle to shield format.
 func ParticleToShield(particle setup.Particle) (int64, error) {
-	switch p := particle.ParticleType.(type) {
+	switch p := particle.(type) {
 	case setup.PredefinedParticle:
 		number, ok := predefinedParticleToShieldMapping[p]
 		if ok {
@@ -51,7 +51,7 @@ var predefinedParticleToShieldMapping = map[setup.PredefinedParticle]int64{
 
 // ScoringToShield ...
 func ScoringToShield(scoringType setup.DetectorScoring) (string, error) {
-	switch scoring := scoringType.ScoringType.(type) {
+	switch scoring := scoringType.(type) {
 	case setup.PredefinedScoring:
 		name, found := scoringToShield[string(scoring)]
 		if !found {

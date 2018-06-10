@@ -11,7 +11,6 @@ var zoneTestCases = test.MarshallingCases{
 		&Zone{
 			ID:         ZoneID(1),
 			ParentID:   ZoneID(0),
-			Name:       "name",
 			BaseID:     BodyID(1),
 			MaterialID: MaterialID(2),
 			Construction: []*ZoneOperation{
@@ -37,7 +36,6 @@ var zoneTestCases = test.MarshallingCases{
 		&Zone{
 			ID:         ZoneID(2),
 			ParentID:   ZoneID(1),
-			Name:       "name",
 			BaseID:     BodyID(1),
 			MaterialID: MaterialID(2),
 			Construction: []*ZoneOperation{

@@ -59,17 +59,17 @@ func (z *zoneConverter) convertSetupZonesToZoneTreeForest() ([]*zoneTree, error)
 func (z *zoneConverter) createZoneTree(zoneModel *setup.Zone) (*zoneTree, error) {
 	baseBodyID, found := z.bodyIDToShield[zoneModel.BaseID]
 	if !found {
-		return nil, converter.ZoneIDError(zoneModel.ID, "Cannot find body: %d", zoneModel.BaseID)
+		return nil, fmt.Errorf("Cannot find body: %d", zoneModel.BaseID)
 	}
 
 	operations, err := z.convertSetupOperations(zoneModel.Construction)
 	if err != nil {
-		return nil, converter.ZoneIDError(zoneModel.ID, "%s", err.Error)
+		return nil, fmt.Errorf("%s", err.Error)
 	}
 
 	materialID, found := z.materialIDToShield[zoneModel.MaterialID]
 	if !found {
-		return nil, converter.ZoneIDError(zoneModel.ID, "Cannot find material: %d", zoneModel.MaterialID)
+		return nil, fmt.Errorf("Cannot find material: %d", zoneModel.MaterialID)
 	}
 
 	childModelIDs := []setup.ZoneID{}
@@ -83,7 +83,7 @@ func (z *zoneConverter) createZoneTree(zoneModel *setup.Zone) (*zoneTree, error)
 	for _, childModelID := range childModelIDs {
 		childModel, found := z.zoneMap[childModelID]
 		if !found {
-			return nil, converter.ZoneIDError(zoneModel.ID, "Can not find Children {ID: %d}", childModelID)
+			return nil, fmt.Errorf("Can not find Children {ID: %d}", childModelID)
 		}
 
 		child, err := z.createZoneTree(&childModel)

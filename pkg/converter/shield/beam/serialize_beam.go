@@ -55,7 +55,7 @@ var beamCardSerializers = map[string]beamCardSerializerFunc{
 		return ""
 	},
 	"HIPROJ": func(beam setup.Beam, options setup.SimulationOptions) string {
-		particle, ok := beam.Particle.ParticleType.(setup.HeavyIon)
+		particle, ok := beam.Particle.(setup.HeavyIon)
 		if ok {
 			return fmt.Sprintf("%8d", particle.NucleonsCount) + fmt.Sprintf("%8d", particle.Charge)
 		}

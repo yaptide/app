@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"encoding/json"
+	"fmt"
 
 	"github.com/yaptide/yaptide/pkg/converter/geometry"
 )
@@ -12,34 +12,10 @@ type SphereBody struct {
 	Radius float64        `json:"radius"`
 }
 
-// MarshalJSON json.Marshaller implementation.
-func (s SphereBody) MarshalJSON() ([]byte, error) {
-	type Alias SphereBody
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		Alias
-	}{
-		Type:  bodyType.sphere,
-		Alias: Alias(s),
-	})
-}
-
 // CuboidBody represent cuboid of given sizes in a space.
 type CuboidBody struct {
 	Center geometry.Point `json:"center"`
 	Size   geometry.Vec3D `json:"size"`
-}
-
-// MarshalJSON json.Marshaller implementation.
-func (c CuboidBody) MarshalJSON() ([]byte, error) {
-	type Alias CuboidBody
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		Alias
-	}{
-		Type:  bodyType.cuboid,
-		Alias: Alias(c),
-	})
 }
 
 // CylinderBody represent cylinder of given sizes in a space.
@@ -49,14 +25,46 @@ type CylinderBody struct {
 	Radius float64        `json:"radius"`
 }
 
-// MarshalJSON json.Marshaller implementation.
-func (c CylinderBody) MarshalJSON() ([]byte, error) {
-	type Alias CylinderBody
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		Alias
-	}{
-		Type:  bodyType.cylinder,
-		Alias: Alias(c),
-	})
+// Validate ...
+func (b SphereBody) Validate() error {
+	result := mErr{}
+
+	if b.Radius <= 0 {
+		result["radius"] = fmt.Errorf("should be positive non-zero value")
+	}
+
+	if len(result) > 0 {
+		return result
+	}
+	return nil
+}
+
+// Validate ...
+func (b CuboidBody) Validate() error {
+	result := mErr{}
+
+	if err := b.Size.ValidatePositive(); err != nil {
+		result["size"] = err
+	}
+
+	if len(result) > 0 {
+		return result
+	}
+	return nil
+}
+
+func (b CylinderBody) Validate() error {
+	result := mErr{}
+
+	if b.Height <= 0 {
+		result["height"] = fmt.Errorf("should positive non-zero value")
+	}
+	if b.Height <= 0 {
+		result["radius"] = fmt.Errorf("should positive non-zero value")
+	}
+
+	if len(result) > 0 {
+		return result
+	}
+	return nil
 }

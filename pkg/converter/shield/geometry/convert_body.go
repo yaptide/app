@@ -37,7 +37,7 @@ func convertSetupBodies(
 
 		body, err := convertBody(bodyMap[id])
 		if err != nil {
-			return nil, nil, converter.BodyIDError(id, err.Error())
+			return nil, nil, err
 		}
 		body.ID = nextShieldID
 		result = append(result, body)
@@ -71,7 +71,7 @@ func appendBlackholeBody(bodies []Body) ([]Body, ShieldBodyID, error) {
 }
 
 func convertBody(b setup.Body) (Body, error) {
-	switch g := b.Geometry.BodyType.(type) {
+	switch g := b.Geometry.(type) {
 	case setup.SphereBody:
 		return convertSphere(g)
 	case setup.CuboidBody:

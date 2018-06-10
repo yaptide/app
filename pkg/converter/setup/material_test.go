@@ -8,9 +8,9 @@ import (
 
 var materialTestCasses = test.MarshallingCases{
 	{
-		&Material{MaterialID(1), MaterialSpecs{
+		&Material{MaterialID(1),
 			MaterialPredefined{PredefinedID: "methanol"},
-		}},
+		},
 		`{
 			"id": 1,
 			"specs": {
@@ -20,12 +20,12 @@ var materialTestCasses = test.MarshallingCases{
 		}`,
 	},
 	{
-		&Material{MaterialID(1), MaterialSpecs{MaterialPredefined{
+		&Material{MaterialID(1), MaterialPredefined{
 			PredefinedID:              "methanol",
 			StateOfMatter:             Liquid,
 			Density:                   0.001,
 			LoadExternalStoppingPower: false,
-		}}},
+		}},
 		`{
 			"id": 1,
 			"specs": {
@@ -37,7 +37,7 @@ var materialTestCasses = test.MarshallingCases{
 		}`,
 	},
 	{
-		&Material{MaterialID(1), MaterialSpecs{MaterialCompound{
+		&Material{MaterialID(1), MaterialCompound{
 			Name:          "ala",
 			Density:       1.2345,
 			StateOfMatter: Gas,
@@ -45,7 +45,7 @@ var materialTestCasses = test.MarshallingCases{
 				Element{Isotope: "As-75", RelativeStoichiometricFraction: 1},
 				Element{Isotope: "H-1 - Hydrogen", RelativeStoichiometricFraction: 8},
 			},
-		}}},
+		}},
 		`{
 			"id": 1,
 			"specs": {
@@ -67,16 +67,16 @@ var materialTestCasses = test.MarshallingCases{
 		}`,
 	},
 	{
-		&Material{MaterialID(1), MaterialSpecs{MaterialCompound{
+		&Material{MaterialID(1), MaterialCompound{
 			Name:          "kot",
 			Density:       99.9,
 			StateOfMatter: Liquid,
 			Elements: []Element{
-				Element{Isotope: "Gd-*", RelativeStoichiometricFraction: 2, AtomicMass: 100.23},
-				Element{Isotope: "U-235", RelativeStoichiometricFraction: 123, IValue: 555.34},
+				Element{Isotope: "Gd-*", RelativeStoichiometricFraction: 2, AtomicMass: func() *int64 { i := int64(100); return &i }()},
+				Element{Isotope: "U-235", RelativeStoichiometricFraction: 123, IValue: func() *float64 { i := float64(555.34); return &i }()},
 			},
 			ExternalStoppingPowerFromPredefined: "Water",
-		}}},
+		}},
 		`{
 			"id": 1,
 			"specs": {
@@ -88,7 +88,7 @@ var materialTestCasses = test.MarshallingCases{
 					{
 						"isotope": "Gd-*",
 						"relativeStoichiometricFraction": 2,
-						"atomicMass": 100.23
+						"atomicMass": 100
 					},
 					{
 						"isotope": "U-235",

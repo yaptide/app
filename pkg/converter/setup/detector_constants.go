@@ -1,68 +1,48 @@
 package setup
 
-// PredefinedParticleRecord ...
-type PredefinedParticleRecord struct {
-	Value string `json:"value"`
-	Name  string `json:"name"`
+// PredefinedParticleTypesSet ...
+var PredefinedParticleTypesSet = map[string]bool{
+	"all":              true,
+	"proton":           true,
+	"he_4":             true,
+	"heavy_ion":        true,
+	"neutron":          true,
+	"pion_pi_minus":    true,
+	"pion_pi_plus":     true,
+	"pion_pi_zero":     true,
+	"anti_neutron":     true,
+	"anti_proton":      true,
+	"kaon_minus":       true,
+	"kaon_plus":        true,
+	"kaon_zero":        true,
+	"kaon_anti":        true,
+	"gamma":            true,
+	"electron":         true,
+	"positron":         true,
+	"muon_minus":       true,
+	"muon_plus":        true,
+	"e_neutrino":       true,
+	"e_anti_neutrino":  true,
+	"mi_neutrino":      true,
+	"mi_anti_neutrino": true,
+	"deuteron":         true,
+	"triton":           true,
+	"he_3":             true,
 }
 
-// ScoringTypeRecord ...
-type ScoringTypeRecord struct {
-	Value string `json:"value"`
-	Name  string `json:"name"`
-}
-
-var predefinedParticles = []PredefinedParticleRecord{
-	PredefinedParticleRecord{"all", "All particles"},
-	PredefinedParticleRecord{"proton", "Proton"},
-	PredefinedParticleRecord{"he_4", "He-4"},
-	PredefinedParticleRecord{"heavy_ion", "Heavy ion"},
-	PredefinedParticleRecord{"neutron", "Neutron"},
-	PredefinedParticleRecord{"pion_pi_minus", "Pion π−"},
-	PredefinedParticleRecord{"pion_pi_plus", "Pion π+"},
-	PredefinedParticleRecord{"pion_pi_zero", "Pion π0"},
-	PredefinedParticleRecord{"anti_neutron", "Anti-neutron"},
-	PredefinedParticleRecord{"anti_proton", "Anti-proton"},
-	PredefinedParticleRecord{"kaon_minus", "Kaon κ-"},
-	PredefinedParticleRecord{"kaon_plus", "Kaon κ+"},
-	PredefinedParticleRecord{"kaon_zero", "Kaon κ0"},
-	PredefinedParticleRecord{"kaon_anti", "Kaon κ~"},
-	PredefinedParticleRecord{"gamma", "Gamma ray"},
-	PredefinedParticleRecord{"electron", "Electron"},
-	PredefinedParticleRecord{"positron", "Positron"},
-	PredefinedParticleRecord{"muon_minus", "Moun µ-"},
-	PredefinedParticleRecord{"muon_plus", "Muon µ+"},
-	PredefinedParticleRecord{"e_neutrino", "Neutrino e-"},
-	PredefinedParticleRecord{"e_anti_neutrino", "Anti-Neutrino e-"},
-	PredefinedParticleRecord{"mi_neutrino", "Neutrino µ−"},
-	PredefinedParticleRecord{"mi_anti_neutrino", "Anti-Neutrino µ−"},
-	PredefinedParticleRecord{"deuteron", "Deuteron"},
-	PredefinedParticleRecord{"triton", "Triton"},
-	PredefinedParticleRecord{"he_3", "He-3"},
-}
-
-var predefinedScoring = []ScoringTypeRecord{
-	ScoringTypeRecord{"dose", "Dose"},
-	ScoringTypeRecord{"energy", "Energy"},
-	ScoringTypeRecord{"fluence", "Fluence"},
-	//	ScoringTypeRecord{"crossflu", "Cross"},
-	//	ScoringTypeRecord{"letflu", "Letflu"},
-	ScoringTypeRecord{"dlet", "Dlet"},
-	ScoringTypeRecord{"tlet", "Tlet"},
-	ScoringTypeRecord{"avg_energy", "Avg energy"},
-	ScoringTypeRecord{"avg_beta", "Avg beta"},
-	//	ScoringTypeRecord{"ddd", "DDD"},
-	ScoringTypeRecord{"spc", "SPC"},
-	ScoringTypeRecord{"alanine", "Alanine"},
-	ScoringTypeRecord{"counter", "Counter"},
-}
-
-// ParticleTypes ...
-func ParticleTypes() []PredefinedParticleRecord {
-	return predefinedParticles
-}
-
-// ScoringTypes ...
-func ScoringTypes() []ScoringTypeRecord {
-	return predefinedScoring
+// ScoringTypesSet ...
+var ScoringTypesSet = map[string]bool{
+	"dose":       true,
+	"energy":     true,
+	"fluence":    true,
+	"crossflu":   true,
+	"letflu":     true,
+	"dlet":       true,
+	"tlet":       true,
+	"avg_energy": true,
+	"avg_beta":   true,
+	"ddd":        true,
+	"spc":        true,
+	"alanine":    true,
+	"counter":    true,
 }

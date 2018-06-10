@@ -1,8 +1,6 @@
 package setup
 
 import (
-	"encoding/json"
-
 	"github.com/yaptide/yaptide/pkg/converter/geometry"
 )
 
@@ -13,13 +11,6 @@ type DetectorPlane struct {
 }
 
 // MarshalJSON json.Marshaller implementation.
-func (d DetectorPlane) MarshalJSON() ([]byte, error) {
-	type Alias DetectorPlane
-	return json.Marshal(struct {
-		Type string `json:"type"`
-		Alias
-	}{
-		Type:  detectorGeometryType.plane,
-		Alias: Alias(d),
-	})
+func (d DetectorPlane) Validate() error {
+	return nil
 }

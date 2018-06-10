@@ -31,7 +31,6 @@ type Zone struct {
 	// ID of parent. If ID == RootID then Zone is a root.
 	ParentID ZoneID `json:"parentId"`
 
-	Name         string           `json:"name"`
 	BaseID       BodyID           `json:"baseId"`
 	MaterialID   MaterialID       `json:"materialId"`
 	Construction []*ZoneOperation `json:"construction"`

@@ -26,10 +26,10 @@ const (
 
 // StateOfMatterToShield ...
 var StateOfMatterToShield = map[setup.StateOfMatter]StateOfMatter{
-	setup.NonDefined: StateNonDefined,
-	setup.Solid:      StateSolid,
-	setup.Gas:        StateGas,
-	setup.Liquid:     StateLiquid,
+	setup.UndefinedStateOfMatter: StateNonDefined,
+	setup.Solid:                  StateSolid,
+	setup.Gas:                    StateGas,
+	setup.Liquid:                 StateLiquid,
 }
 
 // BlackholeMaterialID represent Blackhole material in shield input files.

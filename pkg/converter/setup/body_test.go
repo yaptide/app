@@ -10,7 +10,7 @@ import (
 
 var bodyTestCasses = test.MarshallingCases{
 	{
-		&Body{ID: BodyID(1), Name: "name", Geometry: BodyGeometry{SphereBody{}}},
+		&Body{ID: BodyID(1), Geometry: SphereBody{}},
 		`{
 			"id": 1,
 			"name": "name",
@@ -23,7 +23,7 @@ var bodyTestCasses = test.MarshallingCases{
 	},
 
 	{
-		&Body{ID: BodyID(2), Name: "name", Geometry: BodyGeometry{CuboidBody{}}},
+		&Body{ID: BodyID(2), Geometry: CuboidBody{}},
 		`{
 			"id": 2,
 			"name": "name",
@@ -36,7 +36,7 @@ var bodyTestCasses = test.MarshallingCases{
 	},
 
 	{
-		&Body{ID: BodyID(3), Name: "somethin", Geometry: BodyGeometry{CylinderBody{}}},
+		&Body{ID: BodyID(3), Geometry: CylinderBody{}},
 		`{
 			"id": 3,
 			"name": "somethin",
