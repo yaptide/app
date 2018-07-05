@@ -10,7 +10,8 @@ var mapDistributionToJSON = map[setup.Distribution]string{
 	setup.GaussianDistribution: "gaussian",
 }
 
-var mapJSONToDistribution = func() (mapping map[string]setup.Distribution) {
+var mapJSONToDistribution = func() map[string]setup.Distribution {
+	mapping := map[string]setup.Distribution{}
 	for key, value := range mapDistributionToJSON {
 		mapping[value] = key
 	}

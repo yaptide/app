@@ -18,7 +18,7 @@ var bodyType = struct {
 
 func BodyMarshaler(b setup.Body) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
-		m("id", Int64Marshaler(b.ID))
+		m("id", Int64Marshaler(int64(b.ID)))
 		m("geometry", func() (interface{}, error) {
 			switch b := b.Geometry.(type) {
 			case setup.SphereBody:
@@ -36,7 +36,7 @@ func BodyMarshaler(b setup.Body) marshaler {
 
 func BodyUnmarshaler(b *setup.Body) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		u("id", Int64Unmarshaler(&b.ID))
+		u("id", Int64Unmarshaler((*int64)(&b.ID)))
 		u("geometry", UnionTypeUnmarshaler(
 			func(unionType string) unmarshaler {
 				switch unionType {

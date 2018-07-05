@@ -43,7 +43,7 @@ var letScoringTypes = map[string]bool{
 
 func DetectorMarshaler(d setup.Detector) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
-		m("id", Int64Marshaler(d.ID))
+		m("id", Int64Marshaler(int64(d.ID)))
 		m("geometry", func() (interface{}, error) {
 			switch d := d.Geometry.(type) {
 			case setup.DetectorGeomap:
@@ -67,7 +67,7 @@ func DetectorMarshaler(d setup.Detector) marshaler {
 
 func DetectorUnmarshaler(d *setup.Detector) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		u("id", Int64Unmarshaler(&d.ID))
+		u("id", Int64Unmarshaler((*int64)(&d.ID)))
 		u("geometry", UnionTypeUnmarshaler(
 			func(unionType string) unmarshaler {
 				switch unionType {
@@ -189,7 +189,7 @@ func DetectorScoringMarshaler(d setup.DetectorScoring) marshaler {
 		case setup.LetTypeScoring:
 			return StructMarshaler(func(m fieldMarshaler) {
 				m("type", StringMarshaler(d.Type))
-				m("material", Int64Marshaler(d.Material))
+				m("material", Int64Marshaler(int64(d.Material)))
 			})()
 		default:
 			return nil, fmt.Errorf("unknown detector scoring type %v", d)
@@ -206,7 +206,7 @@ func DetectorScoringUnmarshaler(d *setup.DetectorScoring) unmarshaler {
 				return StructUnmarshaler(func(u fieldUnmarshaler) {
 					scoring := setup.LetTypeScoring{}
 					u("type", StringUnmarshaler(&scoring.Type))
-					u("material", Int64Unmarshaler(&scoring.Material))
+					u("material", Int64Unmarshaler((*int64)(&scoring.Material)))
 					*d = scoring
 				})(raw)
 			} else {

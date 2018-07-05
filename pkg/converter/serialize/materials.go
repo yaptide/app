@@ -18,7 +18,7 @@ var materialType = struct {
 
 func MaterialMarshaler(mat setup.Material) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
-		m("id", Int64Marshaler(mat.ID))
+		m("id", Int64Marshaler(int64(mat.ID)))
 		m("specs", func() (interface{}, error) {
 			switch mat := mat.Specs.(type) {
 			case setup.MaterialPredefined:
@@ -36,7 +36,7 @@ func MaterialMarshaler(mat setup.Material) marshaler {
 
 func MaterialUnmarshaler(m *setup.Material) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		u("id", Int64Unmarshaler(&m.ID))
+		u("id", Int64Unmarshaler((*int64)(&m.ID)))
 		u("specs", UnionTypeUnmarshaler(func(unionType string) unmarshaler {
 			switch unionType {
 			case materialType.predefined:
@@ -93,8 +93,8 @@ func MaterialCompoundMarshaler(o setup.MaterialCompound) marshaler {
 						"relativeStoichiometricFraction",
 						Int64Marshaler(o.RelativeStoichiometricFraction),
 					)
-					m("atomicMass", Int64Marshaler(o.AtomicMass))
-					m("iValue", Float64Marshaler(*o.IValue))
+					m("atomicMass", PtrMarshaler(o.AtomicMass, Int64Marshaler))
+					m("iValue", PtrMarshaler(o.IValue, Float64Marshaler))
 				})
 			}),
 		)
@@ -120,8 +120,8 @@ func MaterialCompoundUnmarshaler(o *setup.MaterialSpecs) unmarshaler {
 						"relativeStoichiometricFraction",
 						Int64Unmarshaler(&o.RelativeStoichiometricFraction),
 					)
-					u("atomicMass", Int64Unmarshaler(&o.AtomicMass))
-					u("iValue", Float64Unmarshaler(o.IValue)) // TODO: fix
+					u("atomicMass", PtrUnmarshaler(&o.AtomicMass, Int64Unmarshaler))
+					u("iValue", PtrUnmarshaler(&o.IValue, Float64Unmarshaler))
 				})
 			}),
 		)

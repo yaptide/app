@@ -2,6 +2,7 @@ package serialize
 
 import (
 	"fmt"
+
 	"github.com/yaptide/yaptide/pkg/converter/setup"
 )
 
@@ -17,7 +18,8 @@ var mapStateToJSON = map[setup.StateOfMatter]string{
 }
 
 // reverse mapStateToJSON
-var mapJSONToState = func() (mapping map[string]setup.StateOfMatter) {
+var mapJSONToState = func() map[string]setup.StateOfMatter {
+	mapping := map[string]setup.StateOfMatter{}
 	for key, value := range mapStateToJSON {
 		mapping[value] = key
 	}
