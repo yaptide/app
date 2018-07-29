@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 func TestOetFromZoneDescription(t *testing.T) {
 	baseBodyID := ShieldBodyID(1)
 	operations := []operation{
-		operation{BodyID: 2, Type: setup.Intersect},
-		operation{BodyID: 3, Type: setup.Union},
-		operation{BodyID: 4, Type: setup.Subtract},
+		operation{BodyID: 2, Type: specs.Intersect},
+		operation{BodyID: 3, Type: specs.Union},
+		operation{BodyID: 4, Type: specs.Subtract},
 	}
 
 	expected := createOetBinaryExpression(intersection,

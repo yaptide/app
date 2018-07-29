@@ -1,9 +1,8 @@
 package geometry
 
 import (
-	"github.com/yaptide/yaptide/pkg/converter"
-	"github.com/yaptide/yaptide/pkg/converter/setup"
 	"github.com/yaptide/yaptide/pkg/converter/shield/material"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 // Geometry represent ready to serialize data for geo.dat file.
@@ -13,13 +12,13 @@ type Geometry struct {
 	ZoneToMaterialPairs []ZoneToMaterial
 }
 
-// ConvertSetupGeometry ...
-func ConvertSetupGeometry(
-	bodyMap converter.BodyMap,
-	zoneMap converter.ZoneMap,
-	materialIDToShield map[setup.MaterialID]material.ShieldID,
-) (Geometry, map[setup.BodyID]ShieldBodyID, error) {
-	bodies, bodyIDToShield, err := convertSetupBodies(bodyMap)
+// ConvertGeometry ...
+func ConvertGeometry(
+	bodyMap map[specs.BodyID]specs.Body,
+	zoneMap map[specs.ZoneID]specs.Zone,
+	materialIDToShield map[specs.MaterialID]material.ShieldID,
+) (Geometry, map[specs.BodyID]ShieldBodyID, error) {
+	bodies, bodyIDToShield, err := convertBodies(bodyMap)
 	if err != nil {
 		return Geometry{}, bodyIDToShield, err
 	}
@@ -29,7 +28,7 @@ func ConvertSetupGeometry(
 		return Geometry{}, bodyIDToShield, err
 	}
 
-	zoneForest, err := convertSetupZonesToZoneTreeForest(zoneMap, materialIDToShield, bodyIDToShield)
+	zoneForest, err := convertZonesToZoneTreeForest(zoneMap, materialIDToShield, bodyIDToShield)
 	if err != nil {
 		return Geometry{}, bodyIDToShield, err
 	}

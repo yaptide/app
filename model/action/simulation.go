@@ -43,13 +43,13 @@ func (s *SimulationContext) SetProjectResults(
 	}
 	if simulationErr != nil {
 		return s.db.SimulationResult().UpdateID(
-			project.Versions[s.versionID].ResultID,
+			project.Versions[s.versionID].ResultsID,
 			bson.M{"$set": bson.M{"invalid": simulationErr.Error()}},
 		)
 	}
 
 	return s.db.SimulationResult().UpdateID(
-		project.Versions[s.versionID].ResultID,
+		project.Versions[s.versionID].ResultsID,
 		results,
 	)
 }

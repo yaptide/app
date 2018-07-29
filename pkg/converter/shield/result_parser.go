@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/yaptide/yaptide/pkg/converter"
-	"github.com/yaptide/yaptide/pkg/converter/log"
 )
 
 // ParseResults will parse results of shield simulation.

@@ -2,29 +2,30 @@ package simulation
 
 import (
 	"github.com/yaptide/yaptide/model"
-	"github.com/yaptide/yaptide/pkg/converter"
 	"github.com/yaptide/yaptide/pkg/converter/shield"
 	"github.com/yaptide/yaptide/runner/file"
 )
 
 type shieldProcessor struct {
-	shield.RawShieldSetup
+	shield.RawShieldSpecs
 	serializationContext shield.SerializationContext
 }
 
-func (p *shieldProcessor) ConvertModel(simSetup *model.SimulationSetup) error {
-	convertedModel, serializationContext, convertErr := shield.Convert(simSetup.Setup)
+func (p *shieldProcessor) ConvertModel(simulationsSpecs *model.SimulationSpecs) error {
+	convertedModel, serializationContext, convertErr := shield.Convert(
+		simulationsSpecs.ConverterConfiguration(),
+	)
 	if convertErr != nil {
 		return convertErr
 	}
-	p.RawShieldSetup = convertedModel
+	p.RawShieldSpecs = convertedModel
 	p.serializationContext = serializationContext
 	return nil
 }
 
 func (p *shieldProcessor) HandleFileResults(
 	simResults file.SimulationResults,
-) (*converter.Result, error) {
+) (*model.SimulationResults, error) {
 	parserOutput, parserErr := shield.ParseResults(
 		simResults.Files,
 		&p.serializationContext,

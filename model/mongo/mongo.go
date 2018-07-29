@@ -14,8 +14,8 @@ const OR = "$or"
 const (
 	projectCollection           = "project"
 	userCollection              = "user"
-	simulationSetupCollection   = "simulationSetup"
-	simulationResultsCollection = "simulationResult"
+	simulationSpecsCollection   = "simulationSpecs"
+	simulationResultsCollection = "simulationResults"
 )
 
 // PrimaryKey ...
@@ -38,7 +38,7 @@ type DB struct {
 	session          *mgo.Session
 	User             func() Collection
 	Project          func() Collection
-	SimulationSetup  func() Collection
+	SimulationSpecs  func() Collection
 	SimulationResult func() Collection
 }
 
@@ -102,9 +102,9 @@ func SetupDB(config *conf.Config, session *mgo.Session) (func() DB, error) {
 					collection: db.C(projectCollection),
 				}
 			},
-			SimulationSetup: func() Collection {
+			SimulationSpecs: func() Collection {
 				return collection{
-					collection: db.C(simulationSetupCollection),
+					collection: db.C(simulationSpecsCollection),
 				}
 			},
 			SimulationResult: func() Collection {

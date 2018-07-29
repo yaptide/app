@@ -17,6 +17,8 @@ func init() {
 	spew.Config.DisableCapacities = true
 	spew.Config.DisablePointerMethods = true
 	spew.Config.DisablePointerAddresses = true
+	spew.Config.SortKeys = true
+	spew.Config.SpewKeys = true
 }
 
 var jsonFormatterConfig = formatter.AsciiFormatterConfig{
@@ -45,6 +47,20 @@ func DiffJSON(t *testing.T, expected, actual []byte) string {
 		return str
 	}
 	return ""
+}
+
+// AssertDeepEqual ...
+func AssertDeepEqual(t *testing.T, expected, actual interface{}) {
+	t.Helper()
+	if reflect.DeepEqual(expected, actual) {
+		return
+	}
+	expectedStr := spew.Sdump(expected)
+	actualStr := spew.Sdump(actual)
+
+	dump := diffmatchpatch.New()
+	diffs := dump.DiffMain(expectedStr, actualStr, true)
+	t.Errorf("AssertDeepEqual failed with diff \n%s", dump.DiffPrettyText(diffs))
 }
 
 // DiffModel ...

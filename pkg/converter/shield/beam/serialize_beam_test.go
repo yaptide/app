@@ -5,14 +5,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/yaptide/yaptide/pkg/converter/geometry"
-	"github.com/yaptide/yaptide/pkg/converter/log"
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 func TestSuccessfullDeafultBeamSerialization(t *testing.T) {
-	serialized := Serialize(setup.DefaultBeam, setup.DefaultOptions)
-	log.Warning("\n" + serialized)
-	log.Warning("\n" + expectedTest1)
+	serialized := Serialize(specs.DefaultBeam, specs.DefaultOptions)
 
 	assert.Equal(t, expectedTest1, serialized)
 }
@@ -41,30 +38,30 @@ func TestSuccessfullBeamSerialization(t *testing.T) {
 	assert.Equal(t, expectedTest2, serialized)
 }
 
-var beamTest2 = setup.Beam{
-	Direction: setup.BeamDirection{
+var beamTest2 = specs.Beam{
+	Direction: specs.BeamDirection{
 		Phi: 1, Theta: 1, Position: geometry.Point{X: 110, Y: 1.2220, Z: 0.001},
 	},
-	Divergence: setup.BeamDivergence{
+	Divergence: specs.BeamDivergence{
 		SigmaX:       0,
 		SigmaY:       0,
-		Distribution: setup.GaussianDistribution,
+		Distribution: specs.GaussianDistribution,
 	},
-	Particle: setup.Particle{setup.HeavyIon{
+	Particle: specs.HeavyIon{
 		NucleonsCount: 111,
 		Charge:        10,
-	}},
+	},
 	InitialBaseEnergy:  100,
 	InitialEnergySigma: 1,
 }
 
-var optionsTest2 = setup.SimulationOptions{
+var optionsTest2 = specs.SimulationOptions{
 	AntyparticleCorrectionOn:   true,
 	NuclearReactionsOn:         false,
 	MeanEnergyLoss:             90,
 	MinEnergyLoss:              0.112,
-	ScatteringType:             setup.MoliereScattering,
-	EnergyStraggling:           setup.VavilovStraggling,
+	ScatteringType:             specs.MoliereScattering,
+	EnergyStraggling:           specs.VavilovStraggling,
 	FastNeutronTransportOn:     false,
 	LowEnergyNeutronCutOff:     11.11,
 	NumberOfGeneratedParticles: 0,

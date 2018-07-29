@@ -1,0 +1,16 @@
+package specs
+
+// Distribution ...
+type Distribution int64
+
+const (
+	// NoDistribution ...
+	NoDistribution Distribution = iota
+	// FlatDistribution ...
+	FlatDistribution
+	// GaussianDistribution ...
+	GaussianDistribution
+)
+
+// Fraction ...
+type Fraction float64

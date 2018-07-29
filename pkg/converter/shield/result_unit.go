@@ -5,8 +5,6 @@ import (
 	"encoding/binary"
 	"strconv"
 	"strings"
-
-	"github.com/yaptide/yaptide/pkg/converter/log"
 )
 
 type bdoDataUnit string

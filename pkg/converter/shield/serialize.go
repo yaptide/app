@@ -1,7 +1,6 @@
 package shield
 
 import (
-	"github.com/yaptide/yaptide/pkg/converter/log"
 	"github.com/yaptide/yaptide/pkg/converter/shield/beam"
 	"github.com/yaptide/yaptide/pkg/converter/shield/detector"
 	"github.com/yaptide/yaptide/pkg/converter/shield/geometry"
@@ -9,7 +8,7 @@ import (
 )
 
 // SerializeData ...
-func SerializeData(data RawShieldSetup) map[string]string {
+func SerializeData(data RawShieldSpecs) map[string]string {
 	log.Debug("[Serializer] data %+v", data)
 	files := map[string]string{}
 

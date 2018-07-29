@@ -60,17 +60,17 @@ func setupRoutes(h *handler, db dbProvider, jwt *jwtProvider) (http.Handler, err
 		router.Put("/{projectId}/{versionId}/settings", w(h.updateProjectVersionSettingsHandler))
 	})
 
-	router.Route("/simulation/setup", func(router chi.Router) {
+	router.Route("/simulation/specs", func(router chi.Router) {
 		router.Use(jwt.middleware)
 
-		router.Get("/{setupId}", w(h.getSimulationSetup))
-		router.Put("/{setupId}", w(h.updateSimulationSetup))
+		router.Get("/{specsId}", w(h.getSimulationSpecs))
+		router.Put("/{specsId}", w(h.updateSimulationSpecs))
 	})
 
 	router.Route("/simulation/results", func(router chi.Router) {
 		router.Use(jwt.middleware)
 
-		router.Get("/{resultId}", w(h.getSimulationResult))
+		router.Get("/{resultsId}", w(h.getSimulationResults))
 	})
 
 	router.Route("/simulation/run", func(router chi.Router) {
@@ -78,7 +78,7 @@ func setupRoutes(h *handler, db dbProvider, jwt *jwtProvider) (http.Handler, err
 
 		router.Post("/", w(h.runSimulationHandler))
 	})
-	router.Get("/server_configuration", w(h.getConfiguration))
+	router.Get("/server_configuration", w(h.getServerConfiguration))
 
 	return router, nil
 }

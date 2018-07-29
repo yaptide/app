@@ -9,13 +9,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Version is project version, which contains settting and simulation setup/results.
+// Version is project version, which contains settting and simulation specs/results.
 type Version struct {
 	ID        int           `json:"id" bson:"_id"`
 	Status    VersionStatus `json:"status" bson:"status"`
 	Settings  Settings      `json:"settings" bson:"settings"`
-	SetupID   bson.ObjectId `json:"setupId" bson:"setupId"`
-	ResultID  bson.ObjectId `json:"resultId" bson:"resultId"`
+	SpecsID   bson.ObjectId `json:"specsId" bson:"specsId"`
+	ResultsID bson.ObjectId `json:"resultsId" bson:"resultsId"`
 	UpdatedAt time.Time     `json:"updatedAt" bson:"updatedAt"`
 }
 

@@ -1,7 +1,7 @@
 package mapping
 
 import (
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 // MaterialICRU is representation of predefined materials in shield mat.dat file.
@@ -25,11 +25,11 @@ const (
 )
 
 // StateOfMatterToShield ...
-var StateOfMatterToShield = map[setup.StateOfMatter]StateOfMatter{
-	setup.UndefinedStateOfMatter: StateNonDefined,
-	setup.Solid:                  StateSolid,
-	setup.Gas:                    StateGas,
-	setup.Liquid:                 StateLiquid,
+var StateOfMatterToShield = map[specs.StateOfMatter]StateOfMatter{
+	specs.UndefinedStateOfMatter: StateNonDefined,
+	specs.Solid:                  StateSolid,
+	specs.Gas:                    StateGas,
+	specs.Liquid:                 StateLiquid,
 }
 
 // BlackholeMaterialID represent Blackhole material in shield input files.

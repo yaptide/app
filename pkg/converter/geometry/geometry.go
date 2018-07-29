@@ -3,7 +3,10 @@ package geometry
 
 import (
 	"fmt"
+	"github.com/yaptide/yaptide/pkg/converter/errors"
 )
+
+type mErr = errors.MErr
 
 // Point represent a point in space.
 type Point struct {

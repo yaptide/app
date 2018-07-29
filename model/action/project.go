@@ -1,6 +1,7 @@
 package action
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"github.com/yaptide/yaptide/errors"
 	"github.com/yaptide/yaptide/model"
 	"gopkg.in/mgo.v2"
@@ -46,16 +47,17 @@ func (r *Resolver) ProjectCreate(
 	project.Name = input.Name
 	project.Description = input.Description
 
-	setup, setupErr := r.SimulationSetupCreateInitial(ctx)
-	if setupErr != nil {
-		return nil, setupErr
+	specs, specsErr := r.SimulationSpecsCreateInitial(ctx)
+	if specsErr != nil {
+		return nil, specsErr
 	}
-	result, resultErr := r.SimulationResultCreateInitial(ctx)
+	log.Error(spew.Sdump(specs))
+	result, resultErr := r.SimulationResultsCreateInitial(ctx)
 	if resultErr != nil {
 		return nil, resultErr
 	}
-	project.Versions[0].SetupID = setup.ID
-	project.Versions[0].ResultID = result.ID
+	project.Versions[0].SpecsID = specs.ID
+	project.Versions[0].ResultsID = result.ID
 
 	insertErr := ctx.db.Project().Insert(project)
 	if insertErr != nil {

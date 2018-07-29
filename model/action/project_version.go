@@ -58,15 +58,15 @@ func (r *Resolver) projectVersionCreateFromExisting(
 
 	oldVersion := &project.Versions[versionID]
 
-	setup, setupErr := r.SimulationSetupCreateFrom(ctx, oldVersion.SetupID)
-	if setupErr != nil {
+	specs, specsErr := r.SimulationSpecsCreateFrom(ctx, oldVersion.SpecsID)
+	if specsErr != nil {
 		log.Warnf(
-			"SimulationSetup create failed for project %s version %d",
+			"SimulationSpecs create failed for project %s version %d",
 			projectID.Hex(), versionID,
 		)
-		return setupErr
+		return specsErr
 	}
-	result, resultErr := r.SimulationResultCreateInitial(ctx)
+	result, resultErr := r.SimulationResultsCreateInitial(ctx)
 	if resultErr != nil {
 		log.Warnf(
 			"SimulationResult create failed for project %s version %d",
@@ -79,8 +79,8 @@ func (r *Resolver) projectVersionCreateFromExisting(
 		ID:        len(project.Versions),
 		Settings:  oldVersion.Settings,
 		Status:    model.New,
-		SetupID:   setup.ID,
-		ResultID:  result.ID,
+		SpecsID:   specs.ID,
+		ResultsID: result.ID,
 		UpdatedAt: time.Now(),
 	}
 

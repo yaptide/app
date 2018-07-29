@@ -3,25 +3,25 @@ package mapping
 import (
 	"fmt"
 
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 // ParticleToShield map Particle to shield format.
-func ParticleToShield(particle setup.Particle) (int64, error) {
+func ParticleToShield(particle specs.Particle) (int64, error) {
 	switch p := particle.(type) {
-	case setup.PredefinedParticle:
+	case specs.PredefinedParticle:
 		number, ok := predefinedParticleToShieldMapping[p]
 		if ok {
 			return number, nil
 		}
 		return int64(0), fmt.Errorf("Unsuported particle type %T", particle)
-	case setup.HeavyIon:
+	case specs.HeavyIon:
 		return int64(25), nil
 	}
 	return int64(0), fmt.Errorf("Unsuported particle type %T", particle)
 }
 
-var predefinedParticleToShieldMapping = map[setup.PredefinedParticle]int64{
+var predefinedParticleToShieldMapping = map[specs.PredefinedParticle]int64{
 	"all":              -1,
 	"neutron":          1,
 	"proton":           2,
@@ -50,15 +50,15 @@ var predefinedParticleToShieldMapping = map[setup.PredefinedParticle]int64{
 }
 
 // ScoringToShield ...
-func ScoringToShield(scoringType setup.DetectorScoring) (string, error) {
+func ScoringToShield(scoringType specs.DetectorScoring) (string, error) {
 	switch scoring := scoringType.(type) {
-	case setup.PredefinedScoring:
+	case specs.PredefinedScoring:
 		name, found := scoringToShield[string(scoring)]
 		if !found {
 			return "", fmt.Errorf("Unsuported scoring type %s", scoring)
 		}
 		return name, nil
-	case setup.LetTypeScoring:
+	case specs.LetTypeScoring:
 		name, found := scoringToShield[scoring.Type]
 		if !found {
 			return "", fmt.Errorf("Unsuported scoring type %s", scoring.Type)

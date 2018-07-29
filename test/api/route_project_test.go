@@ -77,8 +77,8 @@ var projectTestCasses = []apiTestCase{
 			require.True(t, versionOk)
 			assert.Equal(t, float64(0), version["id"])
 			assert.Equal(t, "new", version["status"])
-			assertMongoID(t, version["setupId"])
-			assertMongoID(t, version["resultId"])
+			assertMongoID(t, version["specsId"])
+			assertMongoID(t, version["resultsId"])
 			assert.NotZero(t, version["updatedAt"])
 
 			versionSettings, setttingsOk := version["settings"].(map[string]interface{})
@@ -229,13 +229,14 @@ var projectTestCasses = []apiTestCase{
 		},
 	},
 	apiTestCase{
-		name: "check setup and results objects in project",
+		name: "check specs and results objects in project",
 		requests: []func(*testing.T, []response) request{
 			createDefaultUserRequest,
 			loginAsDefaultUserRequest,
 			createProjectRequest,
 		},
 		validate: func(t *testing.T, responses []response, session *mgo.Session) {
+			printEntireDB(t, session)
 			r := responses[2]
 			t.Logf("%+v", r)
 			assert.Equal(t, http.StatusOK, r.code)
@@ -249,18 +250,18 @@ var projectTestCasses = []apiTestCase{
 			versions := extractFromMapInterface(t, project, "versions")
 			version := extractFromSliceInterface(t, versions, 0)
 
-			setupID := extractFromMapInterface(t, version, "setupId")
-			resultID := extractFromMapInterface(t, version, "resultId")
+			specsID := extractFromMapInterface(t, version, "specsId")
+			resultsID := extractFromMapInterface(t, version, "resultsId")
 
-			var setup M
+			var specs M
 			var result M
 			require.Nil(t,
-				session.DB("").C("simulationSetup").
-					FindId(setupID).One(&setup),
+				session.DB("").C("simulationSpecs").
+					FindId(specsID).One(&specs),
 			)
 			require.Nil(t,
-				session.DB("").C("simulationResult").
-					FindId(resultID).One(&result),
+				session.DB("").C("simulationResults").
+					FindId(resultsID).One(&result),
 			)
 		},
 	},

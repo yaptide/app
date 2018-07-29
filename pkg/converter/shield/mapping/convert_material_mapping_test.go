@@ -3,11 +3,11 @@ package mapping
 import (
 	"testing"
 
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 func TestPredefinedMaterialsToShieldICRUMapping(t *testing.T) {
-	for predefinedMaterial := range setup.PredefinedMaterialsSet {
+	for predefinedMaterial := range specs.PredefinedMaterialsSet {
 		_, found := PredefinedMaterialsToShieldICRU[predefinedMaterial]
 		if !found {
 			t.Errorf(
@@ -19,7 +19,7 @@ func TestPredefinedMaterialsToShieldICRUMapping(t *testing.T) {
 }
 
 func TestIsotopeToShieldNUCLIDMapping(t *testing.T) {
-	for isotope := range setup.IsotopesSet {
+	for isotope := range specs.IsotopesSet {
 		_, found := IsotopesToShieldNUCLID[isotope]
 		if !found {
 			t.Errorf(

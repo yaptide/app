@@ -3,14 +3,13 @@ package geometry
 import (
 	"fmt"
 
-	"github.com/yaptide/yaptide/pkg/converter"
-	"github.com/yaptide/yaptide/pkg/converter/setup"
 	"github.com/yaptide/yaptide/pkg/converter/shield/material"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 type operation struct {
 	BodyID ShieldBodyID
-	Type   setup.ZoneOperationType
+	Type   specs.ZoneOperationType
 }
 
 type zoneTree struct {
@@ -22,30 +21,30 @@ type zoneTree struct {
 	materialID material.ShieldID
 }
 
-func convertSetupZonesToZoneTreeForest(
-	zoneMap converter.ZoneMap,
-	materialIDToShield map[setup.MaterialID]material.ShieldID,
-	bodyIDToShield map[setup.BodyID]ShieldBodyID) ([]*zoneTree, error) {
+func convertZonesToZoneTreeForest(
+	zoneMap map[specs.ZoneID]specs.Zone,
+	materialIDToShield map[specs.MaterialID]material.ShieldID,
+	bodyIDToShield map[specs.BodyID]ShieldBodyID) ([]*zoneTree, error) {
 
 	converter := zoneConverter{
 		zoneMap:            zoneMap,
 		materialIDToShield: materialIDToShield,
 		bodyIDToShield:     bodyIDToShield,
 	}
-	return converter.convertSetupZonesToZoneTreeForest()
+	return converter.convertZonesToZoneTreeForest()
 }
 
 type zoneConverter struct {
-	zoneMap            converter.ZoneMap
-	materialIDToShield map[setup.MaterialID]material.ShieldID
-	bodyIDToShield     map[setup.BodyID]ShieldBodyID
+	zoneMap            map[specs.ZoneID]specs.Zone
+	materialIDToShield map[specs.MaterialID]material.ShieldID
+	bodyIDToShield     map[specs.BodyID]ShieldBodyID
 }
 
-func (z *zoneConverter) convertSetupZonesToZoneTreeForest() ([]*zoneTree, error) {
+func (z *zoneConverter) convertZonesToZoneTreeForest() ([]*zoneTree, error) {
 	forest := []*zoneTree{}
 
 	for _, zoneModel := range z.zoneMap {
-		if zoneModel.ParentID == setup.RootID {
+		if zoneModel.ParentID == specs.RootID {
 			newZoneTree, err := z.createZoneTree(&zoneModel)
 			if err != nil {
 				return nil, err
@@ -56,15 +55,15 @@ func (z *zoneConverter) convertSetupZonesToZoneTreeForest() ([]*zoneTree, error)
 	return forest, nil
 }
 
-func (z *zoneConverter) createZoneTree(zoneModel *setup.Zone) (*zoneTree, error) {
+func (z *zoneConverter) createZoneTree(zoneModel *specs.Zone) (*zoneTree, error) {
 	baseBodyID, found := z.bodyIDToShield[zoneModel.BaseID]
 	if !found {
 		return nil, fmt.Errorf("Cannot find body: %d", zoneModel.BaseID)
 	}
 
-	operations, err := z.convertSetupOperations(zoneModel.Construction)
+	operations, err := z.convertZoneOperations(zoneModel.Construction)
 	if err != nil {
-		return nil, fmt.Errorf("%s", err.Error)
+		return nil, fmt.Errorf("%s", err.Error())
 	}
 
 	materialID, found := z.materialIDToShield[zoneModel.MaterialID]
@@ -72,7 +71,7 @@ func (z *zoneConverter) createZoneTree(zoneModel *setup.Zone) (*zoneTree, error)
 		return nil, fmt.Errorf("Cannot find material: %d", zoneModel.MaterialID)
 	}
 
-	childModelIDs := []setup.ZoneID{}
+	childModelIDs := []specs.ZoneID{}
 	for _, zone := range z.zoneMap {
 		if zone.ParentID == zoneModel.ID {
 			childModelIDs = append(childModelIDs, zone.ID)
@@ -102,11 +101,11 @@ func (z *zoneConverter) createZoneTree(zoneModel *setup.Zone) (*zoneTree, error)
 	}, nil
 }
 
-func (z *zoneConverter) convertSetupOperations(
-	setupOperations []*setup.ZoneOperation,
+func (z *zoneConverter) convertZoneOperations(
+	specsOperations []specs.ZoneOperation,
 ) ([]operation, error) {
 	operations := []operation{}
-	for _, o := range setupOperations {
+	for _, o := range specsOperations {
 		bodyID, found := z.bodyIDToShield[o.BodyID]
 		if !found {
 			return nil, fmt.Errorf("Cannot find body: %d", o.BodyID)

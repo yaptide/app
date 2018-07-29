@@ -33,10 +33,6 @@ func serializePredefined(writer io.Writer, predef PredefinedMaterial) {
 
 	fmt.Fprintf(writer, "ICRU %d\n", predef.ICRUNumber)
 
-	if predef.LoadExternalStoppingPower {
-		fmt.Fprintln(writer, "LOADDEDX")
-	}
-
 	fmt.Fprintln(writer, "END")
 }
 
@@ -49,16 +45,12 @@ func serializeCompound(writer io.Writer, compound CompoundMaterial) {
 		fmt.Fprintf(writer, "NUCLID %d %d\n", element.ID, element.RelativeStoichiometricFraction)
 
 		if element.SerializeAtomicMass() {
-			fmt.Fprintf(writer, "AMASS %f\n", element.AtomicMass)
+			fmt.Fprintf(writer, "AMASS %v\n", element.AtomicMass)
 		}
 
 		if element.SerializeIValue() {
-			fmt.Fprintf(writer, "IVALUE %f\n", element.IValue)
+			fmt.Fprintf(writer, "IVALUE %v\n", element.IValue)
 		}
-	}
-
-	if compound.SerializeExternalStoppingPower() {
-		fmt.Fprintf(writer, "LOADDEDX %d\n", compound.ExternalStoppingPowerFromMaterialICRU)
 	}
 
 	fmt.Fprintln(writer, "END")

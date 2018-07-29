@@ -50,18 +50,18 @@ var projectVersionTestCasses = []apiTestCase{
 			rawVersions := extractFromMapInterface(t, rawProject, "versions")
 			rawVersion := extractFromSliceInterface(t, rawVersions, 0)
 
-			setupID := extractFromMapInterface(t, rawVersion, "setupId")
-			resultID := extractFromMapInterface(t, rawVersion, "resultId")
+			specsID := extractFromMapInterface(t, rawVersion, "specsId")
+			resultsID := extractFromMapInterface(t, rawVersion, "resultsId")
 
-			var setup M
+			var specs M
 			var result M
 			require.Nil(t,
-				session.DB("").C("simulationSetup").
-					FindId(setupID).One(&setup),
+				session.DB("").C("simulationSpecs").
+					FindId(specsID).One(&specs),
 			)
 			require.Nil(t,
-				session.DB("").C("simulationResult").
-					FindId(resultID).One(&result),
+				session.DB("").C("simulationResults").
+					FindId(resultsID).One(&result),
 			)
 
 			assert.Equal(t, "project name",

@@ -49,9 +49,9 @@ func (h *Handler) HandleSimulation(
 	}
 	version := project.Versions[versionID]
 
-	setup, setupErr := h.action.SimulationSetupGet(ctx, version.SetupID)
-	if setupErr != nil {
-		return setupErr
+	specs, specsErr := h.action.SimulationSpecsGet(ctx, version.SpecsID)
+	if specsErr != nil {
+		return specsErr
 	}
 
 	if err := version.Settings.IsValid(); err != nil {
@@ -64,7 +64,7 @@ func (h *Handler) HandleSimulation(
 	}
 
 	log.Debug("Start simulation request (serialization)")
-	serializeErr := request.ConvertModel(setup)
+	serializeErr := request.ConvertModel(&specs.Specs)
 	if serializeErr != nil {
 		return serializeErr
 	}

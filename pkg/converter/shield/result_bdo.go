@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/yaptide/yaptide/pkg/converter"
-	"github.com/yaptide/yaptide/pkg/converter/log"
 )
 
 // TODO: support for big endian (for no litle endian files and host system is assumed)
@@ -106,13 +105,13 @@ func (p *bdoParser) readNextToken() error {
 	itemSize := uint64(dataType.GetSize())
 
 	if tagIDBinErr != nil || numberOfItemsErr != nil {
-		errMsg := log.Error("Unexpected read error. Can't ever happened")
-		return fmt.Errorf(errMsg)
+		log.Error("Unexpected read error. Can't ever happened")
+		return fmt.Errorf("unexpected read error")
 	}
 	tokenSize := uint64(24) + itemSize*numberOfItems
 	if uint64(len(p.content)) < tokenSize {
-		errMsg := log.Warning("To short content of %s", p.filename)
-		return fmt.Errorf(errMsg)
+		log.Warning("To short content of %s", p.filename)
+		return fmt.Errorf("To short content of %s", p.filename)
 	}
 
 	log.Debug(
@@ -123,8 +122,8 @@ func (p *bdoParser) readNextToken() error {
 
 	handler := tagsHandler[tagID]
 	if handler == nil {
-		errMsg := log.Warning("Unknown handler %d", tagID)
-		return fmt.Errorf(errMsg)
+		log.Warning("Unknown handler %d", tagID)
+		return fmt.Errorf("Unknown handler %d", tagID)
 	}
 
 	parseTokenErr := handler(dataType, splitedToken, p)

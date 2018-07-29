@@ -52,16 +52,16 @@ func assertMongoID(t *testing.T, value interface{}) {
 func printEntireDB(t *testing.T, session *mgo.Session) {
 	var users []interface{}
 	var projects []interface{}
-	var setups []interface{}
+	var specs []interface{}
 	var results []interface{}
 
 	require.Nil(t, session.DB("").C("user").Find(M{}).All(&users))
 	require.Nil(t, session.DB("").C("project").Find(M{}).All(&projects))
-	require.Nil(t, session.DB("").C("simulationSetup").Find(M{}).All(&setups))
-	require.Nil(t, session.DB("").C("simulationResult").Find(M{}).All(&results))
+	require.Nil(t, session.DB("").C("simulationSpecs").Find(M{}).All(&specs))
+	require.Nil(t, session.DB("").C("simulationResults").Find(M{}).All(&results))
 	t.Logf("users :\n%s", spew.Sdump(users))
 	t.Logf("projects :\n%s", spew.Sdump(projects))
-	t.Logf("simulation setups :\n%s", spew.Sdump(setups))
+	t.Logf("simulation specs :\n%s", spew.Sdump(specs))
 	t.Logf("simulation results :\n%s", spew.Sdump(results))
 }
 

@@ -79,11 +79,11 @@ func extractProjectID(ctx context.Context) bson.ObjectId {
 func extractVersionID(ctx context.Context) int {
 	return extractIntURLParamIDContext(ctx, "versionId")
 }
-func extractSimulationSetupID(ctx context.Context) bson.ObjectId {
-	return extractBsonURLParamIDContext(ctx, "setupId")
+func extractSimulationSpecsID(ctx context.Context) bson.ObjectId {
+	return extractBsonURLParamIDContext(ctx, "specsId")
 }
 func extractSimulationResultID(ctx context.Context) bson.ObjectId {
-	return extractBsonURLParamIDContext(ctx, "resultId")
+	return extractBsonURLParamIDContext(ctx, "resultsId")
 }
 
 func writeJSONResponse(w http.ResponseWriter, httpStatus int, body interface{}) error {

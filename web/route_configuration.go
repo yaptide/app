@@ -3,10 +3,10 @@ package web
 import (
 	"context"
 
-	"github.com/yaptide/yaptide/model"
+	model "github.com/yaptide/yaptide/model/simulation"
 )
 
-func (h *handler) getConfiguration(ctx context.Context) (interface{}, error) {
+func (h *handler) getServerConfiguration(ctx context.Context) (interface{}, error) {
 	return struct {
 		PredefinedMaterials []model.PredefinedMaterialRecord `json:"predefinedMaterials"`
 		Isotopes            []model.IsotopeRecord            `json:"isotopes"`

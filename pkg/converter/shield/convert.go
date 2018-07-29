@@ -7,25 +7,46 @@ import (
 	"github.com/yaptide/yaptide/pkg/converter/shield/detector"
 	"github.com/yaptide/yaptide/pkg/converter/shield/geometry"
 	"github.com/yaptide/yaptide/pkg/converter/shield/material"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
-// Convert simulation setup model to easily serializable data,
+// Convert simulation specs model to easily serializable data,
 // which is input for shield serializer.
-// Return error, if setup data are not semantically correct.
-func Convert(setup converter.Setup) (RawShieldSetup, SerializationContext, error) {
+// Return error, if specs data are not semantically correct.
+func Convert(simulationSpecs converter.Specs) (RawShieldSpecs, SerializationContext, error) {
 	simContext := NewSerializationContext()
 
-	err := checkSetupCompleteness(setup)
+	err := checkSpecsCompleteness(simulationSpecs)
 	if err != nil {
-		return RawShieldSetup{}, simContext, err
+		return RawShieldSpecs{}, simContext, err
 	}
 
-	materials, materialIDToShield, materialErr := material.ConvertSetupMaterials(setup.Materials)
-	geometry, mapBodyToShield, geometryErr := geometry.ConvertSetupGeometry(
-		setup.Bodies, setup.Zones, materialIDToShield,
+	mapMaterials := map[specs.MaterialID]specs.Material{}
+	for _, material := range simulationSpecs.Materials {
+		mapMaterials[material.ID] = material
+	}
+
+	mapBodies := map[specs.BodyID]specs.Body{}
+	for _, body := range simulationSpecs.Bodies {
+		mapBodies[body.ID] = body
+	}
+
+	mapZones := map[specs.ZoneID]specs.Zone{}
+	for _, zone := range simulationSpecs.Zones {
+		mapZones[zone.ID] = zone
+	}
+
+	mapDetectors := map[specs.DetectorID]specs.Detector{}
+	for _, detector := range simulationSpecs.Detectors {
+		mapDetectors[detector.ID] = detector
+	}
+
+	materials, materialIDToShield, materialErr := material.ConvertMaterials(mapMaterials)
+	geometry, mapBodyToShield, geometryErr := geometry.ConvertGeometry(
+		mapBodies, mapZones, materialIDToShield,
 	)
-	detectors, mapDetectorToShield, detectorErr := detector.ConvertSetupDetectors(
-		setup.Detectors, materialIDToShield,
+	detectors, mapDetectorToShield, detectorErr := detector.ConvertDetectors(
+		mapDetectors, materialIDToShield,
 	)
 
 	for key, value := range materialIDToShield {
@@ -40,18 +61,18 @@ func Convert(setup converter.Setup) (RawShieldSetup, SerializationContext, error
 
 	_, _, _ = materialErr, geometryErr, detectorErr
 
-	return RawShieldSetup{
+	return RawShieldSpecs{
 			Materials: materials,
 			Geometry:  geometry,
 			Detectors: detectors,
-			Beam:      setup.Beam,
-			Options:   setup.Options,
+			Beam:      simulationSpecs.Beam,
+			Options:   simulationSpecs.Options,
 		},
 		simContext,
 		nil
 }
 
-func checkSetupCompleteness(setup converter.Setup) error {
+func checkSpecsCompleteness(specs converter.Specs) error {
 	createMissingError := func(mapName string) error {
 		return fmt.Errorf("[serializer]: %s map is null", mapName)
 	}
@@ -61,24 +82,24 @@ func checkSetupCompleteness(setup converter.Setup) error {
 	}
 
 	switch {
-	case setup.Bodies == nil:
+	case specs.Bodies == nil:
 		return createMissingError("Bodies")
-	case setup.Zones == nil:
+	case specs.Zones == nil:
 		return createMissingError("Zones")
-	case setup.Materials == nil:
+	case specs.Materials == nil:
 		return createMissingError("Materials")
-	case setup.Detectors == nil:
+	case specs.Detectors == nil:
 		return createMissingError("Detectors")
 	}
 
 	switch {
-	case len(setup.Bodies) == 0:
+	case len(specs.Bodies) == 0:
 		return createEmptyError("Bodies")
-	case len(setup.Zones) == 0:
+	case len(specs.Zones) == 0:
 		return createEmptyError("Zones")
-	case len(setup.Materials) == 0:
+	case len(specs.Materials) == 0:
 		return createEmptyError("Materials")
-	case len(setup.Detectors) == 0:
+	case len(specs.Detectors) == 0:
 		return createEmptyError("Detectors")
 	}
 

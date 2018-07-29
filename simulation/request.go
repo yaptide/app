@@ -1,10 +1,10 @@
 package simulation
 
 import (
-	"github.com/yaptide/yaptide/model"
+	model "github.com/yaptide/yaptide/model"
 )
 
 type request interface {
-	ConvertModel(setup *model.SimulationSetup) error
+	ConvertModel(specs *model.SimulationSpecs) error
 	StartSimulation() error
 }

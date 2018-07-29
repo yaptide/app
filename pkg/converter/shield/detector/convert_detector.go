@@ -6,14 +6,13 @@ import (
 	"sort"
 	"unicode"
 
-	"github.com/yaptide/yaptide/pkg/converter"
 	"github.com/yaptide/yaptide/pkg/converter/geometry"
-	"github.com/yaptide/yaptide/pkg/converter/setup"
 	"github.com/yaptide/yaptide/pkg/converter/shield/mapping"
 	"github.com/yaptide/yaptide/pkg/converter/shield/material"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
-// Detector represent setup.Detector,
+// Detector represent specs.Detector,
 type Detector struct {
 	ScoringType string
 
@@ -21,13 +20,13 @@ type Detector struct {
 	Arguments []interface{}
 }
 
-// ConvertSetupDetectors ...
-func ConvertSetupDetectors(
-	detectorsMap converter.DetectorMap,
-	materialIDToShield map[setup.MaterialID]material.ShieldID,
-) ([]Detector, map[string]setup.DetectorID, error) {
+// ConvertDetectors ...
+func ConvertDetectors(
+	detectorsMap map[specs.DetectorID]specs.Detector,
+	materialIDToShield map[specs.MaterialID]material.ShieldID,
+) ([]Detector, map[string]specs.DetectorID, error) {
 	result := []Detector{}
-	detectIds := []setup.DetectorID{}
+	detectIds := []specs.DetectorID{}
 	for k := range detectorsMap {
 		detectIds = append(detectIds, k)
 	}
@@ -35,25 +34,25 @@ func ConvertSetupDetectors(
 
 	detectorConverter := detectorConverter{materialIDToShield}
 
-	uniqNameSet := map[string]setup.DetectorID{}
-	mapFilenameToDetectorID := map[string]setup.DetectorID{}
+	uniqNameSet := map[string]specs.DetectorID{}
+	mapFilenameToDetectorID := map[string]specs.DetectorID{}
 	for n, id := range detectIds {
-		setupDetector := detectorsMap[id]
+		specsDetector := detectorsMap[id]
 
-		duplicateID, foundDuplicate := uniqNameSet[string(setupDetector.ID)]
+		duplicateID, foundDuplicate := uniqNameSet[string(specsDetector.ID)]
 		if foundDuplicate {
 			return nil, uniqNameSet,
 				fmt.Errorf(
-					"Found name duplicates: \"%s\" for detector Ids: %d and %d",
-					setupDetector.ID, id, duplicateID,
+					"Found name duplicates: \"%v\" for detector Ids: %d and %d",
+					specsDetector.ID, id, duplicateID,
 				)
 		}
-		uniqNameSet[string(setupDetector.ID)] = setupDetector.ID
+		uniqNameSet[string(specsDetector.ID)] = specsDetector.ID
 
-		filename := createDetectorFileName(string(setupDetector.ID), n)
-		mapFilenameToDetectorID[filename] = setupDetector.ID
+		filename := createDetectorFileName(string(specsDetector.ID), n)
+		mapFilenameToDetectorID[filename] = specsDetector.ID
 
-		detector, err := detectorConverter.convertDetector(&setupDetector, filename)
+		detector, err := detectorConverter.convertDetector(&specsDetector, filename)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -64,23 +63,23 @@ func ConvertSetupDetectors(
 }
 
 type detectorConverter struct {
-	materialIDToShield map[setup.MaterialID]material.ShieldID
+	materialIDToShield map[specs.MaterialID]material.ShieldID
 }
 
 func (d detectorConverter) convertDetector(
-	detect *setup.Detector, filename string,
+	detect *specs.Detector, filename string,
 ) (Detector, error) {
 	switch geo := detect.Geometry.(type) {
-	case setup.DetectorGeomap:
+	case specs.DetectorGeomap:
 		return Detector{}, fmt.Errorf("Geomap detector serialization not implemented")
-	case setup.DetectorZones:
+	case specs.DetectorZones:
 		return Detector{}, fmt.Errorf("Zone detector serialization not implemented")
 
-	case setup.DetectorCylinder:
+	case specs.DetectorCylinder:
 		return d.convertStandardGeometryDetector(detect, filename)
-	case setup.DetectorMesh:
+	case specs.DetectorMesh:
 		return d.convertStandardGeometryDetector(detect, filename)
-	case setup.DetectorPlane:
+	case specs.DetectorPlane:
 		return d.convertStandardGeometryDetector(detect, filename)
 
 	default:
@@ -89,12 +88,12 @@ func (d detectorConverter) convertDetector(
 }
 
 func (d detectorConverter) convertStandardGeometryDetector(
-	detect *setup.Detector, filename string,
+	detect *specs.Detector, filename string,
 ) (Detector, error) {
 	var newDetector Detector
 
 	switch geo := detect.Geometry.(type) {
-	case setup.DetectorCylinder:
+	case specs.DetectorCylinder:
 		newDetector = Detector{
 			ScoringType: "CYL",
 			Arguments: []interface{}{
@@ -110,7 +109,7 @@ func (d detectorConverter) convertStandardGeometryDetector(
 				geo.Slices.Z,
 			},
 		}
-	case setup.DetectorMesh:
+	case specs.DetectorMesh:
 		xMin, xMax := geometry.CenterAndSizeToMinAndMax(geo.Center.X, geo.Size.Y)
 		yMin, yMax := geometry.CenterAndSizeToMinAndMax(geo.Center.Y, geo.Size.Y)
 		zMin, zMax := geometry.CenterAndSizeToMinAndMax(geo.Center.Z, geo.Size.Z)
@@ -129,7 +128,7 @@ func (d detectorConverter) convertStandardGeometryDetector(
 				geo.Slices.Z,
 			},
 		}
-	case setup.DetectorPlane:
+	case specs.DetectorPlane:
 		newDetector = Detector{
 			ScoringType: "PLANE",
 			Arguments: []interface{}{
@@ -174,13 +173,13 @@ func (d detectorConverter) convertStandardGeometryDetector(
 
 // TODO: we need A and Z if partile is not HeavyIon and scoring is LetTypeScoring
 func (d detectorConverter) appendHeavyIonOrLetfluCard(
-	arguments []interface{}, particle setup.Particle, scoringType setup.DetectorScoring,
+	arguments []interface{}, particle specs.Particle, scoringType specs.DetectorScoring,
 ) ([]interface{}, error) {
 	switch part := particle.(type) {
-	case setup.HeavyIon:
+	case specs.HeavyIon:
 		arguments = append(arguments, part.NucleonsCount, part.Charge)
 		switch scoring := scoringType.(type) {
-		case setup.LetTypeScoring:
+		case specs.LetTypeScoring:
 			material, found := d.materialIDToShield[scoring.Material]
 			if !found {
 				return nil, fmt.Errorf("Can not found Material{ID: %d} for LetTypeScoring", scoring.Material)

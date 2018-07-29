@@ -1,7 +1,7 @@
 package geometry
 
 import (
-	"github.com/yaptide/yaptide/pkg/converter/setup"
+	"github.com/yaptide/yaptide/pkg/converter/specs"
 )
 
 type oetType int
@@ -150,11 +150,11 @@ func oetFromZoneDescription(baseBodyID ShieldBodyID, operations []operation) *oe
 		var operator oetOperator
 		var sign Sign
 		switch o.Type {
-		case setup.Intersect:
+		case specs.Intersect:
 			operator, sign = intersection, Plus
-		case setup.Union:
+		case specs.Union:
 			operator, sign = union, Plus
-		case setup.Subtract:
+		case specs.Subtract:
 			operator, sign = intersection, Minus
 		}
 

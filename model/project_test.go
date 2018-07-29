@@ -32,10 +32,10 @@ var testCases = test.MarshallingCases{
 var onlyMarshalling = test.MarshallingCases{
 	{
 		&Version{ID: 1,
-			Status:   New,
-			Settings: Settings{},
-			SetupID:  bson.ObjectIdHex("bbbbbbbbbbbbbbbbbbbbbbbb"),
-			ResultID: bson.ObjectIdHex("aaaaaaaaaaaaaaaaaaaaaaaa"),
+			Status:    New,
+			Settings:  Settings{},
+			SpecsID:   bson.ObjectIdHex("bbbbbbbbbbbbbbbbbbbbbbbb"),
+			ResultsID: bson.ObjectIdHex("aaaaaaaaaaaaaaaaaaaaaaaa"),
 		},
 		`{
 			"id": 1,
@@ -44,8 +44,8 @@ var onlyMarshalling = test.MarshallingCases{
 				"simulationEngine": "",
 				"computingLibrary": ""
 			},
-			"setupId": "bbbbbbbbbbbbbbbbbbbbbbbb",
-			"resultId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+			"specsId": "bbbbbbbbbbbbbbbbbbbbbbbb",
+			"resultsId": "aaaaaaaaaaaaaaaaaaaaaaaa",
 			"updatedAt": "0001-01-01T00:00:00Z"
 		}`,
 	},

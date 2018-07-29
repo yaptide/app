@@ -4,17 +4,16 @@ import (
 	"context"
 
 	"github.com/yaptide/yaptide/model"
-	"github.com/yaptide/yaptide/pkg/converter"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func (h *handler) getSimulationResult(
+func (h *handler) getSimulationResults(
 	ctx context.Context,
-) (*model.SimulationResult, error) {
+) (*model.SimulationResultsDB, error) {
 	a := extractActionContext(ctx)
-	resultID := extractSimulationResultID(ctx)
+	resultsID := extractSimulationResultID(ctx)
 
-	result, resultErr := h.Resolver.SimulationResultGet(a, resultID)
+	result, resultErr := h.Resolver.SimulationResultsGet(a, resultsID)
 	if resultErr != nil {
 		return nil, resultErr
 	}
@@ -22,36 +21,36 @@ func (h *handler) getSimulationResult(
 	return result, nil
 }
 
-func (h *handler) getSimulationSetup(
+func (h *handler) getSimulationSpecs(
 	ctx context.Context,
-) (*model.SimulationSetup, error) {
+) (*model.SimulationSpecsDB, error) {
 	a := extractActionContext(ctx)
-	setupID := extractSimulationSetupID(ctx)
+	specsID := extractSimulationSpecsID(ctx)
 
-	setup, setupErr := h.Resolver.SimulationSetupGet(a, setupID)
-	if setupErr != nil {
-		return nil, setupErr
+	specs, specsErr := h.Resolver.SimulationSpecsGet(a, specsID)
+	if specsErr != nil {
+		return nil, specsErr
 	}
 
-	return setup, nil
+	return specs, nil
 }
 
-func (h *handler) updateSimulationSetup(
-	ctx context.Context, input *converter.Setup,
-) (*model.SimulationSetup, error) {
+func (h *handler) updateSimulationSpecs(
+	ctx context.Context, input *model.SimulationSpecs,
+) (*model.SimulationSpecsDB, error) {
 	a := extractActionContext(ctx)
-	setupID := extractSimulationSetupID(ctx)
+	specsID := extractSimulationSpecsID(ctx)
 
-	if err := h.Resolver.SimulationSetupUpdate(a, setupID, input); err != nil {
+	if err := h.Resolver.SimulationSpecsUpdate(a, specsID, input); err != nil {
 		return nil, err
 	}
 
-	setup, getErr := h.Resolver.SimulationSetupGet(a, setupID)
+	specs, getErr := h.Resolver.SimulationSpecsGet(a, specsID)
 	if getErr != nil {
 		return nil, getErr
 	}
 
-	return setup, nil
+	return specs, nil
 }
 
 func (h *handler) runSimulationHandler(
