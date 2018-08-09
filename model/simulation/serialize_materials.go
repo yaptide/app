@@ -66,13 +66,13 @@ func materialPredfinedMarshaler(o specs.MaterialPredefined) marshaler {
 	})
 }
 
-func materialPredfinedUnmarshaler(o *specs.MaterialSpecs) unmarshaler {
-	*o = specs.MaterialPredefined{}
+func materialPredfinedUnmarshaler(material *specs.MaterialSpecs) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		o := (*o).(specs.MaterialPredefined)
+		o := specs.MaterialPredefined{}
 		u("predefinedId", StringUnmarshaler(&o.PredefinedID))
 		u("density", PtrUnmarshaler(&o.Density, Float64Unmarshaler))
 		u("stateOfMatter", stateOfMatterUnmarshaler(&o.StateOfMatter))
+		*material = o
 	})
 }
 
@@ -97,11 +97,9 @@ func materialCompoundMarshaler(o specs.MaterialCompound) marshaler {
 	})
 }
 
-func materialCompoundUnmarshaler(o *specs.MaterialSpecs) unmarshaler {
-	*o = specs.MaterialCompound{}
+func materialCompoundUnmarshaler(material *specs.MaterialSpecs) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		o := (*o).(specs.MaterialCompound)
-		u("name", StringUnmarshaler(&o.Name))
+		o := specs.MaterialCompound{}
 		u("density", Float64Unmarshaler(&o.Density))
 		u("stateOfMatter", stateOfMatterUnmarshaler(&o.StateOfMatter))
 		u("elements",
@@ -117,6 +115,7 @@ func materialCompoundUnmarshaler(o *specs.MaterialSpecs) unmarshaler {
 				})
 			}),
 		)
+		*material = o
 	})
 }
 

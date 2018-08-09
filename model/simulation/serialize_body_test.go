@@ -26,7 +26,7 @@ var bodyTestCases = []test.SerializeTestCase{
 			},
 		},
 		ObjectValue: specs.Body{
-			Geometry: specs.CuboidBody{},
+			Geometry: specs.BodyCuboid{},
 		},
 	},
 	{
@@ -43,7 +43,7 @@ var bodyTestCases = []test.SerializeTestCase{
 			},
 		},
 		ObjectValue: specs.Body{
-			Geometry: specs.SphereBody{},
+			Geometry: specs.BodySphere{},
 		},
 	},
 	{
@@ -61,7 +61,7 @@ var bodyTestCases = []test.SerializeTestCase{
 			},
 		},
 		ObjectValue: specs.Body{
-			Geometry: specs.CylinderBody{},
+			Geometry: specs.BodyCylinder{},
 		},
 	},
 }

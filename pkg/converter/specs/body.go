@@ -14,14 +14,14 @@ type BodyGeometry interface {
 	isBodyType() bool
 }
 
-func (b SphereBody) isBodyType() bool {
+func (b BodySphere) isBodyType() bool {
 	return true
 }
 
-func (b CuboidBody) isBodyType() bool {
+func (b BodyCuboid) isBodyType() bool {
 	return true
 }
 
-func (b CylinderBody) isBodyType() bool {
+func (b BodyCylinder) isBodyType() bool {
 	return true
 }

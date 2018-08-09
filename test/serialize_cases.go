@@ -1,11 +1,15 @@
 package test
 
 import (
+	"encoding/json"
+	"gopkg.in/mgo.v2/bson"
 	"reflect"
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/require"
+	diff "github.com/yudai/gojsondiff"
+	"github.com/yudai/gojsondiff/formatter"
 )
 
 type SerializeTestCase struct {
@@ -26,13 +30,60 @@ func RunSerializeTestCases(
 	}
 }
 
+func RunUnmarshalTestCases(
+	t *testing.T, testCases []SerializeTestCase, unmarshaler interface{},
+) {
+	u := reflect.ValueOf(unmarshaler)
+
+	for _, testCase := range testCases {
+		runSerializeTestCaseUnmarshal(t, testCase, u)
+	}
+}
+
+func RunJsonMarshallTestCase(
+	t *testing.T, expectedJson []byte, object interface{},
+) {
+	actualJson, marshalErr := json.MarshalIndent(object, "  ", "  ")
+	require.Nil(t, marshalErr)
+	assertRawJsonEqual(t, expectedJson, actualJson)
+}
+
+func RunJsonUnmarshallTestCase(
+	t *testing.T, expectedObject interface{}, rawJson []byte,
+) {
+	unpackPtrValue := reflect.New(reflect.TypeOf(expectedObject))
+	unmarshalErr := json.Unmarshal(rawJson, unpackPtrValue.Interface())
+	require.Nil(t, unmarshalErr)
+	AssertDeepEqual(t, expectedObject, unpackPtrValue.Elem().Interface())
+}
+
+func RunBsonMarshallTestCase(
+	t *testing.T, expectedBson interface{}, object interface{},
+) {
+	actualBsonRaw, marshalErr := bson.Marshal(object)
+	require.Nil(t, marshalErr)
+	var actualBson map[string]interface{}
+	require.Nil(t, bson.Unmarshal(actualBsonRaw, &actualBson))
+	AssertDeepEqual(t, expectedBson, actualBson)
+}
+
+func RunBsonUnmarshallTestCase(
+	t *testing.T, expectedObject interface{}, bsonMap interface{},
+) {
+	rawBson, rawBsonErr := bson.Marshal(bsonMap)
+	require.Nil(t, rawBsonErr)
+	unpackPtrValue := reflect.New(reflect.TypeOf(expectedObject))
+	unmarshalErr := bson.Unmarshal(rawBson, unpackPtrValue.Interface())
+	require.Nil(t, unmarshalErr)
+	AssertDeepEqual(t, expectedObject, unpackPtrValue.Elem().Interface())
+}
+
 func runSerializeTestCase(
 	t *testing.T, testCase SerializeTestCase, marshaler reflect.Value, unmarshaler reflect.Value,
 ) {
 	runSerializeTestCaseMarshal(t, testCase, marshaler)
 	runSerializeTestCaseUnmarshal(t, testCase, unmarshaler)
 	runSerializeTestCaseMarshalUnmarshal(t, testCase, marshaler, unmarshaler)
-	runSerializeTestCaseUnmarshalMarshal(t, testCase, marshaler, unmarshaler)
 }
 
 func runSerializeTestCaseMarshal(
@@ -73,7 +124,24 @@ func runSerializeTestCaseMarshalUnmarshal(
 ) {
 }
 
-func runSerializeTestCaseUnmarshalMarshal(
-	t *testing.T, testCase SerializeTestCase, marshaler reflect.Value, unmarshaler reflect.Value,
-) {
+// DiffJSON ...
+func assertRawJsonEqual(t *testing.T, expected, actual []byte) {
+	t.Helper()
+	var expectedObject map[string]interface{}
+	var actualObject map[string]interface{}
+	require.Nil(t, json.Unmarshal(expected, &expectedObject))
+	require.Nil(t, json.Unmarshal(actual, &actualObject))
+
+	if !reflect.DeepEqual(expectedObject, actualObject) {
+		diffs, diffErr := diff.New().Compare(expected, actual)
+		require.Nil(t, diffErr)
+		require.True(t, diffs.Modified())
+
+		formatedStr, formatterErr := formatter.NewAsciiFormatter(
+			expectedObject, jsonFormatterConfig,
+		).Format(diffs)
+		require.Nil(t, formatterErr)
+		t.Logf("expected json != actual json\n%s", formatedStr)
+		t.Fail()
+	}
 }

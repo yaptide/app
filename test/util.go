@@ -58,6 +58,9 @@ func AssertDeepEqual(t *testing.T, expected, actual interface{}) {
 	expectedStr := spew.Sdump(expected)
 	actualStr := spew.Sdump(actual)
 
+	//t.Log(expectedStr)
+	//t.Log(actualStr)
+
 	dump := diffmatchpatch.New()
 	diffs := dump.DiffMain(expectedStr, actualStr, true)
 	t.Errorf("AssertDeepEqual failed with diff \n%s", dump.DiffPrettyText(diffs))

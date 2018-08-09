@@ -41,8 +41,10 @@ var materialsTestCases = []test.SerializeTestCase{
 		ObjectValue: Material{
 			Name: "material name",
 			Material: specs.Material{
-				ID:    specs.MaterialID(1),
-				Specs: specs.MaterialCompound{},
+				ID: specs.MaterialID(1),
+				Specs: specs.MaterialCompound{
+					Elements: []specs.Element{},
+				},
 			},
 		},
 	},

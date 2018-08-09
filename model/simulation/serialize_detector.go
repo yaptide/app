@@ -100,6 +100,7 @@ func detectorUnmarshaler(d *Detector) unmarshaler {
 
 func detectorGeomapMarshaler(d specs.DetectorGeomap) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
+		m("type", StringMarshaler(detectorType.geomap))
 		m("center", pointMarshaler(d.Center))
 		m("size", vec3DMarshaler(d.Size))
 		m("slices", vec3DIntMarshaler(d.Slices))
@@ -118,6 +119,7 @@ func detectorGeomapUnmarshaler(geometry *specs.DetectorGeometry) unmarshaler {
 
 func detectorZonesMarshaler(d specs.DetectorZones) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
+		m("type", StringMarshaler(detectorType.zone))
 		m("zones", ListMarshaler(d.Zones, Int64Marshaler))
 	})
 }
@@ -132,9 +134,10 @@ func detectorZonesUnmarshaler(geometry *specs.DetectorGeometry) unmarshaler {
 
 func detectorCylinderMarshaler(d specs.DetectorCylinder) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
+		m("type", StringMarshaler(detectorType.cylinder))
 		m("radius", rangeMarshaler(d.Radius))
 		m("angle", rangeMarshaler(d.Angle))
-		m("zValue", rangeMarshaler(d.Angle))
+		m("zValue", rangeMarshaler(d.ZValue))
 		m("slices", vec3DCylindricalIntMarshaler(d.Slices))
 	})
 }
@@ -144,7 +147,7 @@ func detectorCylinderUnmarshaler(geometry *specs.DetectorGeometry) unmarshaler {
 		d := specs.DetectorCylinder{}
 		u("radius", rangeUnmarshaler(&d.Radius))
 		u("angle", rangeUnmarshaler(&d.Angle))
-		u("zValue", rangeUnmarshaler(&d.Angle))
+		u("zValue", rangeUnmarshaler(&d.ZValue))
 		u("slices", vec3DCylindricalIntUnmarshaler(&d.Slices))
 		*geometry = d
 	})
@@ -152,6 +155,7 @@ func detectorCylinderUnmarshaler(geometry *specs.DetectorGeometry) unmarshaler {
 
 func detectorMeshMarshaler(d specs.DetectorMesh) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
+		m("type", StringMarshaler(detectorType.mesh))
 		m("center", pointMarshaler(d.Center))
 		m("size", vec3DMarshaler(d.Size))
 		m("slices", vec3DIntMarshaler(d.Slices))
@@ -170,6 +174,7 @@ func detectorMeshUnmarshaler(geometry *specs.DetectorGeometry) unmarshaler {
 
 func detectorPlaneMarshaler(d specs.DetectorPlane) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
+		m("type", StringMarshaler(detectorType.plane))
 		m("point", pointMarshaler(d.Point))
 		m("normal", vec3DMarshaler(d.Normal))
 	})

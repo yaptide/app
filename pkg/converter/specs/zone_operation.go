@@ -15,8 +15,8 @@ const (
 
 // ZoneOperation determines construction of Zone.
 type ZoneOperation struct {
-	BodyID BodyID
 	Type   ZoneOperationType
+	BodyID BodyID
 }
 
 type rawOperation struct {

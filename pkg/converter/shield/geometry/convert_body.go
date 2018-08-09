@@ -47,7 +47,7 @@ func convertBodies(
 func appendBlackholeBody(bodies []Body) ([]Body, ShieldBodyID, error) {
 	newID := bodies[len(bodies)-1].ID + 1
 
-	blackholeBody, err := convertCuboid(specs.CuboidBody{
+	blackholeBody, err := convertCuboid(specs.BodyCuboid{
 		Center: geometry.Point{
 			X: 0.0,
 			Y: 0.0,
@@ -71,11 +71,11 @@ func appendBlackholeBody(bodies []Body) ([]Body, ShieldBodyID, error) {
 
 func convertBody(b specs.Body) (Body, error) {
 	switch g := b.Geometry.(type) {
-	case specs.SphereBody:
+	case specs.BodySphere:
 		return convertSphere(g)
-	case specs.CuboidBody:
+	case specs.BodyCuboid:
 		return convertCuboid(g)
-	case specs.CylinderBody:
+	case specs.BodyCylinder:
 		return convertCylinder(g)
 
 	default:
@@ -83,7 +83,7 @@ func convertBody(b specs.Body) (Body, error) {
 	}
 }
 
-func convertSphere(sphere specs.SphereBody) (Body, error) {
+func convertSphere(sphere specs.BodySphere) (Body, error) {
 	if sphere.Radius <= 0.0 {
 		return Body{}, fmt.Errorf("sphere radius cannot be <= 0.0")
 	}
@@ -94,7 +94,7 @@ func convertSphere(sphere specs.SphereBody) (Body, error) {
 	}, nil
 }
 
-func convertCuboid(cuboid specs.CuboidBody) (Body, error) {
+func convertCuboid(cuboid specs.BodyCuboid) (Body, error) {
 	for axis, size := range map[string]float64{
 		"x": cuboid.Size.X,
 		"y": cuboid.Size.Y,
@@ -115,7 +115,7 @@ func convertCuboid(cuboid specs.CuboidBody) (Body, error) {
 	}, nil
 }
 
-func convertCylinder(cylinder specs.CylinderBody) (Body, error) {
+func convertCylinder(cylinder specs.BodyCylinder) (Body, error) {
 	if cylinder.Height <= 0.0 {
 		return Body{}, fmt.Errorf("cylinder height cannot be <= 0.0")
 	}

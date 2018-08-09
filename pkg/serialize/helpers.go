@@ -457,9 +457,14 @@ func PtrUnmarshaler(
 	if inputType != ptrToPtrValue.Elem().Type() {
 		panic("first arg and pointed should be the same type")
 	}
-	ptrToPtrValue.Elem().Set(reflect.New(ptrToPtrValue.Type().Elem().Elem()))
 
 	return func(raw interface{}) error {
+		if raw == nil {
+			return nil
+		}
+		ptrToPtrValue.Elem().Set( // set pointer value for zerof of that type
+			reflect.New(ptrToPtrValue.Type().Elem().Elem()), // pointer to zero value of that type
+		)
 		unmarshalerFunSlice := newUnmarshalerValue.Call([]reflect.Value{
 			ptrToPtrValue.Elem(),
 		})

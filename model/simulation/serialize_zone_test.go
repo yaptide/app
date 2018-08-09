@@ -10,7 +10,10 @@ import (
 var zoneTestCases = []test.SerializeTestCase{
 	{
 		RawValue: mRaw{
-			"id":           int64(0),
+			"id": int64(0),
+			"color": mRaw{
+				"r": int64(0), "g": int64(0), "b": int64(0), "a": int64(0),
+			},
 			"baseId":       int64(0),
 			"parentId":     int64(0),
 			"materialId":   int64(0),

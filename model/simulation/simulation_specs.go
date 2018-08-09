@@ -11,7 +11,7 @@ import (
 type SpecsDB struct {
 	ID                bson.ObjectId `json:"id" bson:"_id"`
 	UserID            bson.ObjectId `json:"userId" bson:"userId"`
-	Specs             `json:",inline" bson:",inline"`
+	Specs             `json:"specs" bson:"specs"`
 	serializeOverride `json:",-" bson:"-"`
 }
 
@@ -73,7 +73,7 @@ func (c Specs) GetBSON() (interface{}, error) {
 
 // SetBSON ...
 func (c *Specs) SetBSON(raw bson.Raw) error {
-	var unpack interface{}
+	var unpack map[string]interface{}
 	if err := raw.Unmarshal(&unpack); err != nil {
 		return err
 	}

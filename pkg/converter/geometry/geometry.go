@@ -3,6 +3,7 @@ package geometry
 
 import (
 	"fmt"
+
 	"github.com/yaptide/yaptide/pkg/converter/errors"
 )
 
@@ -10,23 +11,23 @@ type mErr = errors.MErr
 
 // Point represent a point in space.
 type Point struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
-	Z float64 `json:"z"`
+	X float64
+	Y float64
+	Z float64
 }
 
 // Vec3DCylindricalInt 3-dimensional vector of integers in cylindrical cordinates.
 type Vec3DCylindricalInt struct {
-	Radius int64 `json:"radius"`
-	Angle  int64 `json:"angle"`
-	Z      int64 `json:"z"`
+	Radius int64
+	Angle  int64
+	Z      int64
 }
 
 // Vec3D represent 3-dimensional vector.
 type Vec3D struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
-	Z float64 `json:"z"`
+	X float64
+	Y float64
+	Z float64
 }
 
 // ValidatePositive ...
@@ -84,8 +85,8 @@ func (v Vec3DInt) ValidatePositive() error {
 
 // Range contain min and max value of certain quantity.
 type Range struct {
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
+	Min float64
+	Max float64
 }
 
 // Validate ...

@@ -22,11 +22,11 @@ func bodyMarshaler(b specs.Body) marshaler {
 		m("id", Int64Marshaler(int64(b.ID)))
 		m("geometry", func() (interface{}, error) {
 			switch b := b.Geometry.(type) {
-			case specs.SphereBody:
+			case specs.BodySphere:
 				return bodySphereMarshaler(b)()
-			case specs.CuboidBody:
+			case specs.BodyCuboid:
 				return bodyCuboidMarshaler(b)()
-			case specs.CylinderBody:
+			case specs.BodyCylinder:
 				return bodyCylinderMarshaler(b)()
 			default:
 				return nil, fmt.Errorf("unknown body geometry")
@@ -56,7 +56,7 @@ func bodyUnmarshaler(b *specs.Body) unmarshaler {
 	})
 }
 
-func bodySphereMarshaler(b specs.SphereBody) marshaler {
+func bodySphereMarshaler(b specs.BodySphere) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
 		m("type", StringMarshaler(bodyType.sphere))
 		m("radius", Float64Marshaler(b.Radius))
@@ -64,16 +64,16 @@ func bodySphereMarshaler(b specs.SphereBody) marshaler {
 	})
 }
 
-func bodySphereUnmarshaler(b *specs.BodyGeometry) unmarshaler {
-	*b = specs.SphereBody{}
+func bodySphereUnmarshaler(body *specs.BodyGeometry) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		b := (*b).(specs.SphereBody)
+		b := specs.BodySphere{}
 		u("radius", Float64Unmarshaler(&b.Radius))
 		u("center", pointUnmarshaler(&b.Center))
+		*body = b
 	})
 }
 
-func bodyCuboidMarshaler(b specs.CuboidBody) marshaler {
+func bodyCuboidMarshaler(b specs.BodyCuboid) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
 		m("type", StringMarshaler(bodyType.cuboid))
 		m("center", pointMarshaler(b.Center))
@@ -81,16 +81,16 @@ func bodyCuboidMarshaler(b specs.CuboidBody) marshaler {
 	})
 }
 
-func bodyCuboidUnmarshaler(b *specs.BodyGeometry) unmarshaler {
-	*b = specs.CuboidBody{}
+func bodyCuboidUnmarshaler(body *specs.BodyGeometry) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		b := (*b).(specs.CuboidBody)
+		b := specs.BodyCuboid{}
 		u("center", pointUnmarshaler(&b.Center))
 		u("size", vec3DUnmarshaler(&b.Size))
+		*body = b
 	})
 }
 
-func bodyCylinderMarshaler(b specs.CylinderBody) marshaler {
+func bodyCylinderMarshaler(b specs.BodyCylinder) marshaler {
 	return StructMarshaler(func(m fieldMarshaler) {
 		m("type", StringMarshaler(bodyType.cylinder))
 		m("height", Float64Marshaler(b.Height))
@@ -99,12 +99,12 @@ func bodyCylinderMarshaler(b specs.CylinderBody) marshaler {
 	})
 }
 
-func bodyCylinderUnmarshaler(b *specs.BodyGeometry) unmarshaler {
-	*b = specs.CylinderBody{}
+func bodyCylinderUnmarshaler(body *specs.BodyGeometry) unmarshaler {
 	return StructUnmarshaler(func(u fieldUnmarshaler) {
-		b := (*b).(specs.CylinderBody)
+		b := specs.BodyCylinder{}
 		u("height", Float64Unmarshaler(&b.Height))
 		u("radius", Float64Unmarshaler(&b.Radius))
 		u("center", pointUnmarshaler(&b.Center))
+		*body = b
 	})
 }

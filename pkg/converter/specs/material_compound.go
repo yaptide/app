@@ -6,8 +6,6 @@ import (
 
 // MaterialCompound material type - create material by defining isotope mixture.
 type MaterialCompound struct {
-	Name string
-
 	// Density of the medium in g/cm³ - mandatory.
 	Density float64
 
@@ -33,10 +31,6 @@ type Element struct {
 // Validate ...
 func (m MaterialCompound) Validate() error {
 	result := mErr{}
-
-	if m.Name == "" {
-		result["name"] = fmt.Errorf("detector name can't be empty")
-	}
 
 	if m.Density <= 0 {
 		result["density"] = fmt.Errorf("density needs to be positive number")

@@ -6,27 +6,27 @@ import (
 	"github.com/yaptide/yaptide/pkg/converter/geometry"
 )
 
-// SphereBody represent sphere with given radius in space.
-type SphereBody struct {
+// BodySphere represent sphere with given radius in space.
+type BodySphere struct {
 	Center geometry.Point
 	Radius float64
 }
 
-// CuboidBody represent cuboid of given sizes in a space.
-type CuboidBody struct {
+// BodyCuboid represent cuboid of given sizes in a space.
+type BodyCuboid struct {
 	Center geometry.Point
 	Size   geometry.Vec3D
 }
 
-// CylinderBody represent cylinder of given sizes in a space.
-type CylinderBody struct {
-	Center geometry.Point `json:"baseCenter"`
-	Height float64        `json:"height"`
-	Radius float64        `json:"radius"`
+// BodyCylinder represent cylinder of given sizes in a space.
+type BodyCylinder struct {
+	Center geometry.Point
+	Height float64
+	Radius float64
 }
 
 // Validate ...
-func (b SphereBody) Validate() error {
+func (b BodySphere) Validate() error {
 	result := mErr{}
 
 	if b.Radius <= 0 {
@@ -40,7 +40,7 @@ func (b SphereBody) Validate() error {
 }
 
 // Validate ...
-func (b CuboidBody) Validate() error {
+func (b BodyCuboid) Validate() error {
 	result := mErr{}
 
 	if err := b.Size.ValidatePositive(); err != nil {
@@ -53,7 +53,7 @@ func (b CuboidBody) Validate() error {
 	return nil
 }
 
-func (b CylinderBody) Validate() error {
+func (b BodyCylinder) Validate() error {
 	result := mErr{}
 
 	if b.Height <= 0 {
